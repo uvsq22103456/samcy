@@ -2,321 +2,239 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SAMCY OS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>SOFIAN.FIT - ULTIMATE</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Amiri:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@400;600;900&display=swap');
+        :root { --bg: #000000; --card: #0d0d0d; --accent: #ff003c; --blue: #0084ff; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: white; height: 100dvh; overflow: hidden; display: flex; flex-direction: column; }
+        .font-sport { font-family: 'Orbitron', sans-serif; }
+        .view-container { flex: 1; overflow-y: auto; padding-bottom: 200px !important; }
+        .glass { background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); }
         
-        :root {
-            --nude-deep: #8E735B;
-            --nude-mid: #C4A484;
-            --nude-light: #F5EBE0;
-            --bg-main: #FAF9F6;
-        }
+        /* CALENDRIER FRANCAIS */
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+        .cal-day { aspect-ratio: 1/1; border-radius: 12px; background: #121212; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; border: 1px solid transparent; position: relative; }
+        .cal-day.active { border-color: var(--accent); background: rgba(255,0,60,0.1); }
+        .cal-today { color: var(--accent); text-decoration: underline; }
+        .event-dot { width: 4px; height: 4px; background: var(--blue); border-radius: 50%; position: absolute; bottom: 4px; }
 
-        body { background-color: var(--bg-main); font-family: 'Plus Jakarta Sans', sans-serif; color: #3D352E; overflow: hidden; touch-action: manipulation; }
+        /* INPUTS DESIGN */
+        input, select { background: transparent !important; border: none !important; border-bottom: 1px solid rgba(255,255,255,0.1) !important; color: white !important; padding: 10px 0 !important; width: 100%; outline: none !important; font-size: 15px; }
+        input:focus { border-bottom-color: var(--accent) !important; }
         
-        .page { display: none; height: 100vh; overflow-y: auto; padding: 20px 20px 140px 20px; animation: fadeIn 0.3s ease; }
-        .page.active { display: block; }
-        .page::-webkit-scrollbar { display: none; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* UI ELEMENTS */
-        .ios-card { background: white; border-radius: 24px; padding: 20px; box-shadow: 0 4px 15px rgba(142, 115, 91, 0.05); border: 1px solid rgba(142, 115, 91, 0.05); margin-bottom: 15px; }
-        .btn-action { background: var(--nude-deep); color: white; border-radius: 12px; padding: 8px 16px; font-size: 12px; font-weight: bold; }
-        
-        /* TAB BAR */
-        .tab-bar { position: fixed; bottom: 30px; left: 24px; right: 24px; height: 70px; background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); border-radius: 35px; display: flex; justify-content: space-around; align-items: center; box-shadow: 0 10px 40px rgba(0,0,0,0.1); z-index: 100; border: 1px solid rgba(255,255,255,0.5); }
-        .nav-item { color: #CCC; font-size: 20px; transition: 0.3s; }
-        .nav-item.active { color: var(--nude-deep); transform: scale(1.1); }
-
-        /* CHAT */
-        .chat-bubble { padding: 12px 16px; border-radius: 18px; max-width: 80%; font-size: 14px; margin-bottom: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
-        .me { background: var(--nude-mid); color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
-        .him { background: white; color: #555; align-self: flex-start; border-bottom-left-radius: 4px; }
-
-        /* CHECKBOXES */
-        .prayer-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f7f7f7; }
-        .toggle-checkbox { width: 20px; height: 20px; accent-color: var(--nude-deep); }
+        .card { background: var(--card); border-radius: 24px; border: 1px solid rgba(255,255,255,0.05); padding: 20px; }
+        .btn-main { background: var(--accent); color: black; font-weight: 900; text-transform: uppercase; padding: 16px; border-radius: 15px; width: 100%; font-size: 12px; transition: 0.2s; }
+        .btn-main:active { transform: scale(0.95); opacity: 0.8; }
+        .nav-active { color: var(--accent); transform: scale(1.1); opacity: 1 !important; }
     </style>
 </head>
 <body>
 
-    <div id="deen" class="page active">
-        <div class="text-center mb-6 pt-6">
-            <h2 class="font-['Amiri'] text-2xl text-[var(--nude-deep)]">بسم الله الرحمن الرحيم</h2>
-            <p id="date-display" class="text-xs text-gray-400 uppercase tracking-widest mt-1">...</p>
+    <header class="pt-14 pb-4 px-6 glass sticky top-0 z-50 flex justify-between items-center">
+        <div>
+            <h1 class="font-sport text-xl italic">SOFIAN<span class="text-rose-600">.FIT</span></h1>
+            <p id="motivation-msg" class="text-[9px] font-black text-rose-500 uppercase tracking-widest mt-1">ON Y CROIT SOFIAN !</p>
         </div>
+        <div class="bg-rose-600 text-black px-3 py-1 rounded-full font-sport text-xs" id="streak-count">0 🔥</div>
+    </header>
 
-        <div class="flex justify-center mb-6">
-            <div class="bg-white p-1 rounded-full shadow-sm border flex">
-                <button onclick="window.switchUser('samia')" id="btn-samia" class="px-6 py-2 rounded-full text-xs font-bold transition-all bg-[var(--nude-light)] text-[var(--nude-deep)]">SAMIA</button>
-                <button onclick="window.switchUser('quincy')" id="btn-quincy" class="px-6 py-2 rounded-full text-xs font-bold transition-all text-gray-400">QUINCY</button>
-            </div>
-        </div>
+    <main class="view-container p-4 space-y-6">
 
-        <div class="ios-card">
-            <h3 class="text-sm font-bold text-gray-600 mb-4 flex items-center gap-2"><i class="fa-solid fa-mosque"></i> Salat</h3>
-            <div id="prayer-list">
+        <section id="view-dash" class="space-y-6">
+            <div class="card">
+                <div class="flex justify-between items-center mb-4 px-2">
+                    <span id="current-month-label" class="text-xs font-black uppercase text-blue-500 font-sport">FÉVRIER 2026</span>
+                    <div class="flex gap-4 opacity-40 text-xs">
+                        <button onclick="changeMonth(-1)">←</button>
+                        <button onclick="changeMonth(1)">→</button>
+                    </div>
                 </div>
-        </div>
-        
-        <div class="ios-card">
-            <h3 class="text-sm font-bold text-gray-600 mb-4"><i class="fa-solid fa-heart"></i> Extras</h3>
-            <div class="prayer-item">
-                <span class="text-sm">Lecture Coran</span>
-                <input type="checkbox" id="check-quran" class="toggle-checkbox" onchange="window.toggleDeen('quran')">
-            </div>
-            <div class="prayer-item">
-                <span class="text-sm">Duas / Adhkar</span>
-                <input type="checkbox" id="check-duas" class="toggle-checkbox" onchange="window.toggleDeen('duas')">
-            </div>
-        </div>
-    </div>
-
-    <div id="home" class="page">
-        <h2 class="text-xl font-bold mb-6 pt-6">Tableau de Bord ✨</h2>
-        
-        <div class="grid grid-cols-2 gap-4 mb-6">
-            <div class="ios-card flex flex-col items-center justify-center py-4" onclick="window.setMood('samia')">
-                <span class="text-[10px] font-bold uppercase text-gray-400">Samia</span>
-                <span id="mood-samia" class="text-4xl my-2">☁️</span>
-                <span class="text-[9px] text-gray-300">Modifier</span>
-            </div>
-            <div class="ios-card flex flex-col items-center justify-center py-4" onclick="window.setMood('quincy')">
-                <span class="text-[10px] font-bold uppercase text-gray-400">Quincy</span>
-                <span id="mood-quincy" class="text-4xl my-2">☕</span>
-                <span class="text-[9px] text-gray-300">Modifier</span>
-            </div>
-        </div>
-
-        <div class="ios-card">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="font-bold text-sm">📅 Événements Clés</h3>
-                <button onclick="window.addEvent()" class="btn-action"><i class="fa-solid fa-plus"></i></button>
-            </div>
-            <div id="events-list" class="space-y-3">
-                <p class="text-xs text-gray-400 text-center py-2">Chargement...</p>
-            </div>
-        </div>
-
-        <div class="ios-card">
-            <div class="flex justify-between items-center mb-2">
-                <h3 class="font-bold text-sm">📝 Notes Partagées</h3>
-                <button onclick="window.saveNote()" class="text-[var(--nude-deep)] text-xs font-bold">Sauvegarder</button>
-            </div>
-            <textarea id="shared-note" class="w-full bg-gray-50 rounded-xl p-3 text-sm text-gray-600 outline-none h-32 resize-none border border-gray-100" placeholder="Écrivez vos idées ici..."></textarea>
-        </div>
-    </div>
-
-    <div id="chat" class="page">
-        <h2 class="text-xl font-bold mb-4 pt-6">Discussion 💌</h2>
-        <div class="flex flex-col h-[75vh]">
-            <div id="chat-box" class="flex-1 overflow-y-auto mb-4 flex flex-col pr-1">
+                <div class="cal-grid text-[9px] font-black opacity-30 uppercase mb-2 text-center">
+                    <span>Lu</span><span>Ma</span><span>Me</span><span>Je</span><span>Ve</span><span>Sa</span><span>Di</span>
                 </div>
-            <div class="bg-white p-3 rounded-2xl shadow-lg border flex gap-2">
-                <input type="text" id="chat-input" class="flex-1 bg-transparent border-none outline-none text-sm" placeholder="Message...">
-                <button onclick="window.sendMessage()" class="w-10 h-10 bg-[var(--nude-deep)] rounded-full text-white"><i class="fa-solid fa-paper-plane"></i></button>
+                <div id="calendar-body" class="cal-grid text-center"></div>
             </div>
-        </div>
-    </div>
 
-    <nav class="tab-bar">
-        <button onclick="window.nav('home', this)" class="nav-item flex flex-col items-center"><i class="fa-solid fa-house"></i></button>
-        <button onclick="window.nav('deen', this)" class="nav-item active flex flex-col items-center"><i class="fa-solid fa-kaaba"></i></button>
-        <button onclick="window.nav('chat', this)" class="nav-item flex flex-col items-center"><i class="fa-solid fa-comment"></i></button>
+            <div class="card border-l-4 border-rose-600 flex justify-between items-center">
+                <div>
+                    <h2 class="text-[10px] font-black opacity-40 uppercase">Fast Food (Max 2/sem)</h2>
+                    <p class="text-3xl font-sport" id="junk-val">0</p>
+                </div>
+                <button onclick="promptJunk()" class="w-12 h-12 bg-white/5 rounded-2xl text-2xl">🍔</button>
+            </div>
+
+            <div class="card">
+                <canvas id="weightChart" height="180"></canvas>
+            </div>
+        </section>
+
+        <section id="view-sport" class="hidden space-y-6">
+            <div class="card space-y-4">
+                <h3 class="text-xs font-black text-rose-500 uppercase italic">Log Séance : <span id="target-date">--</span></h3>
+                <select id="ex-type" onchange="toggleFields()">
+                    <option value="muscu">🏋️ MUSCULATION</option>
+                    <option value="cardio">🏃 CARDIO / COURSE</option>
+                </select>
+                <input type="text" id="ex-name" placeholder="Nom (Squat, Tapis, Forêt...)">
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="number" id="ex-val1" placeholder="Poids / Mins">
+                    <input type="number" id="ex-val2" placeholder="Reps (si muscu)">
+                </div>
+                <div class="flex gap-2">
+                    <input type="time" id="ex-time" value="18:00" class="w-1/3">
+                    <button onclick="saveSport()" class="btn-main flex-1">Enregistrer</button>
+                </div>
+            </div>
+            <div id="day-list" class="space-y-2"></div>
+        </section>
+
+        <section id="view-weight" class="hidden space-y-4">
+            <div class="card text-center">
+                <h2 class="text-xs font-black opacity-40 uppercase mb-4">Mise à jour Poids</h2>
+                <div class="flex gap-4 items-end">
+                    <input type="number" id="weight-in" placeholder="Kg" class="text-center font-sport text-3xl">
+                    <button onclick="addWeight()" class="btn-main w-24">OK</button>
+                </div>
+            </div>
+            <div id="weight-list" class="space-y-2"></div>
+        </section>
+
+    </main>
+
+    <nav class="glass fixed bottom-0 w-full z-50 pt-4 pb-10 px-6 flex justify-around items-center border-t border-white/5">
+        <button onclick="showTab('dash', this)" class="nav-item nav-active opacity-40 flex flex-col items-center">
+            <span class="text-2xl">🏠</span>
+            <span class="text-[8px] font-black mt-1 uppercase tracking-widest">Home</span>
+        </button>
+        <button onclick="showTab('sport', this)" class="nav-item opacity-40 flex flex-col items-center">
+            <span class="text-2xl">🏋️</span>
+            <span class="text-[8px] font-black mt-1 uppercase tracking-widest">Sport</span>
+        </button>
+        <button onclick="showTab('weight', this)" class="nav-item opacity-40 flex flex-col items-center">
+            <span class="text-2xl">⚖️</span>
+            <span class="text-[8px] font-black mt-1 uppercase tracking-widest">Poids</span>
+        </button>
     </nav>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, doc, setDoc, onSnapshot, updateDoc, arrayUnion, collection, addDoc, query, orderBy, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-        // --- REMPLACE TES CLES ICI ---
-        const firebaseConfig = {
-            apiKey: "AIzaSyCBZ96lSFIWzPsHklwk3ZU8kfWudfp8oVQ",
-            authDomain: "samcy-1136c.firebaseapp.com",
-            projectId: "samcy-1136c",
-            storageBucket: "samcy-1136c.firebasestorage.app",
-            messagingSenderId: "337821844780",
-            appId: "1:337821844780:web:4a31a07928e36a1f5a5889"
+    <script>
+        let db = JSON.parse(localStorage.getItem('sofian_final_final')) || {
+            days: {}, weights: [], junk: [], streak: 0
         };
 
-        // Initialisation
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        const quotes = ["ON Y CROIT SOFIAN !", "T'ES UNE MACHINE !", "LAISSE PAS LE MCDO GAGNER !", "CHAQUE SÉANCE COMPTE !"];
+        let selDate = new Date().toISOString().split('T')[0];
+        let displayMonth = new Date();
 
-        // Variables
-        let currentUser = localStorage.getItem('user_role');
-        if (!currentUser) {
-            currentUser = prompt("Qui es-tu ? (Ecris 'samia' ou 'quincy')").toLowerCase();
-            localStorage.setItem('user_role', currentUser);
+        function save() { localStorage.setItem('sofian_final_final', JSON.stringify(db)); render(); }
+
+        function showTab(id, btn) {
+            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+            document.getElementById('view-' + id).classList.remove('hidden');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('nav-active'));
+            btn.classList.add('nav-active');
         }
-        
-        let viewingUser = currentUser;
-        const today = new Date().toISOString().split('T')[0];
 
-        // --- 1. FONCTIONS GLOBALES (IMPORTANT POUR LES BOUTONS) ---
-        
-        // Navigation
-        window.nav = (pageId, btn) => {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
-            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-        };
+        function toggleFields() {
+            const type = document.getElementById('ex-type').value;
+            document.getElementById('ex-val2').classList.toggle('hidden', type === 'cardio');
+        }
 
-        // Switch Deen User
-        window.switchUser = (user) => {
-            viewingUser = user;
-            document.getElementById('btn-samia').className = user === 'samia' ? 'px-6 py-2 rounded-full text-xs font-bold transition-all bg-[var(--nude-light)] text-[var(--nude-deep)]' : 'px-6 py-2 rounded-full text-xs font-bold transition-all text-gray-400';
-            document.getElementById('btn-quincy').className = user === 'quincy' ? 'px-6 py-2 rounded-full text-xs font-bold transition-all bg-[var(--nude-light)] text-[var(--nude-deep)]' : 'px-6 py-2 rounded-full text-xs font-bold transition-all text-gray-400';
-            loadDeen();
-        };
+        function promptJunk() {
+            const f = prompt("C'était quoi le craquage ? (Sois franc !)");
+            if(f) { db.junk.push({ d: selDate, f: f }); save(); }
+        }
 
-        // Deen Logic
-        const prayers = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
-        const listEl = document.getElementById('prayer-list');
-        listEl.innerHTML = prayers.map(p => `
-            <div class="prayer-item">
-                <span class="text-sm font-medium w-20">${p}</span>
-                <input type="checkbox" id="check-${p}" class="toggle-checkbox" onchange="window.toggleDeen('${p}')">
-            </div>
-        `).join('');
+        function saveSport() {
+            const name = document.getElementById('ex-name').value;
+            if(!name) return;
+            if(!db.days[selDate]) db.days[selDate] = [];
+            db.days[selDate].push({
+                t: document.getElementById('ex-type').value,
+                n: name,
+                v1: document.getElementById('ex-val1').value,
+                v2: document.getElementById('ex-val2').value,
+                h: document.getElementById('ex-time').value
+            });
+            document.getElementById('ex-name').value = "";
+            save();
+        }
 
-        window.toggleDeen = async (id) => {
-            if (viewingUser !== currentUser) {
-                alert(`Tu ne peux pas cocher pour ${viewingUser} ! (Tricheuse 😉)`);
-                loadDeen(); // Reset visuel
-                return;
+        function addWeight() {
+            const v = document.getElementById('weight-in').value;
+            if(v) { db.weights.push({ d: selDate, v: parseFloat(v) }); save(); }
+            document.getElementById('weight-in').value = "";
+        }
+
+        function changeMonth(v) { displayMonth.setMonth(displayMonth.getMonth() + v); render(); }
+
+        function render() {
+            document.getElementById('motivation-msg').innerText = quotes[Math.floor(Math.random()*quotes.length)];
+            document.getElementById('target-date').innerText = selDate;
+            
+            // Calendrier
+            const body = document.getElementById('calendar-body');
+            body.innerHTML = "";
+            const y = displayMonth.getFullYear();
+            const m = displayMonth.getMonth();
+            const months = ["JANVIER", "FÉVRIER", "MARS", "AVRIL", "MAI", "JUIN", "JUILLET", "AOÛT", "SEPTEMBRE", "OCTOBRE", "NOVEMBRE", "DÉCEMBRE"];
+            document.getElementById('current-month-label').innerText = `${months[m]} ${y}`;
+
+            const firstDay = new Date(y, m, 1).getDay();
+            const daysInMonth = new Date(y, m + 1, 0).getDate();
+            const offset = firstDay === 0 ? 6 : firstDay - 1;
+
+            for(let i=0; i<offset; i++) body.innerHTML += `<div></div>`;
+            for(let d=1; d<=daysInMonth; d++) {
+                const dStr = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+                const hasSport = db.days[dStr] && db.days[dStr].length > 0;
+                const isSel = dStr === selDate ? 'active' : '';
+                const isToday = dStr === new Date().toISOString().split('T')[0] ? 'cal-today' : '';
+                body.innerHTML += `<div onclick="selDate='${dStr}';render()" class="cal-day ${isSel} ${isToday}">${d}${hasSport?'<div class="event-dot"></div>':''}</div>`;
             }
-            const checked = document.getElementById(`check-${id}`).checked;
-            try {
-                await setDoc(doc(db, "spiritual", `${today}_${currentUser}`), { [id]: checked }, { merge: true });
-            } catch (e) {
-                alert("Erreur: " + e.message);
-            }
-        };
 
-        function loadDeen() {
-            onSnapshot(doc(db, "spiritual", `${today}_${viewingUser}`), (doc) => {
-                const data = doc.exists() ? doc.data() : {};
-                prayers.forEach(p => {
-                    const el = document.getElementById(`check-${p}`);
-                    if(el) el.checked = data[p] || false;
-                });
-                if(document.getElementById('check-quran')) document.getElementById('check-quran').checked = data['quran'] || false;
-                if(document.getElementById('check-duas')) document.getElementById('check-duas').checked = data['duas'] || false;
+            // Junk Food (7 jours glissants)
+            const weekJunk = db.junk.filter(j => (new Date() - new Date(j.d)) / 86400000 <= 7).length;
+            document.getElementById('junk-val').innerText = weekJunk + " / 2";
+            document.getElementById('junk-val').style.color = weekJunk > 2 ? '#ff003c' : 'white';
+
+            // Lists
+            document.getElementById('day-list').innerHTML = (db.days[selDate] || []).map(ex => `
+                <div class="card flex justify-between items-center py-3 bg-white/5 border-none">
+                    <div>
+                        <span class="text-rose-500 font-sport text-[10px] mr-2">${ex.h}</span>
+                        <span class="font-bold text-sm uppercase">${ex.n}</span>
+                    </div>
+                    <span class="text-xs font-sport">${ex.v1}${ex.t=='muscu'?'kg':' min'}</span>
+                </div>
+            `).join('');
+
+            document.getElementById('weight-list').innerHTML = db.weights.slice(-5).reverse().map(w => `
+                <div class="card py-2 flex justify-between opacity-50 text-xs"><span>${w.d}</span><span>${w.v} kg</span></div>
+            `).join('');
+
+            updateChart();
+        }
+
+        function updateChart() {
+            const ctx = document.getElementById('weightChart').getContext('2d');
+            if(window.wChart) window.wChart.destroy();
+            const d = db.weights.slice(-7);
+            window.wChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: d.map(x => x.d.split('-')[2]),
+                    datasets: [{ data: d.map(x => x.v), borderColor: '#ff003c', borderWidth: 3, tension: 0.4, pointRadius: 0 }]
+                },
+                options: { plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false }, ticks: { color: '#444' } } } }
             });
         }
 
-        // --- 2. HOME LOGIC ---
-
-        // Moods
-        window.setMood = async (person) => {
-            if(person !== currentUser) return;
-            const emojis = ['☁️','😊','❤️','🤲','💍','😴','😤','✨'];
-            const choice = prompt(`Choisis ton mood:\n${emojis.join(' ')}`);
-            if(choice && emojis.includes(choice)) {
-                await setDoc(doc(db, "moods", person), { emoji: choice });
-            }
-        };
-
-        onSnapshot(doc(db, "moods", "samia"), d => { if(d.exists()) document.getElementById('mood-samia').innerText = d.data().emoji });
-        onSnapshot(doc(db, "moods", "quincy"), d => { if(d.exists()) document.getElementById('mood-quincy').innerText = d.data().emoji });
-
-        // Notes
-        const noteRef = doc(db, "notes", "shared");
-        window.saveNote = async () => {
-            const txt = document.getElementById('shared-note').value;
-            await setDoc(noteRef, { content: txt }, { merge: true });
-            alert("Note enregistrée !");
-        };
-        onSnapshot(noteRef, d => { if(d.exists()) document.getElementById('shared-note').value = d.data().content || "" });
-
-        // CALENDRIER (Le fameux bouton +)
-        window.addEvent = async () => {
-            const title = prompt("Titre de l'événement (ex: RDV Mairie) :");
-            if(!title) return;
-            const date = prompt("Date (ex: 15 Mars) :");
-            
-            try {
-                await addDoc(collection(db, "events"), {
-                    title: title,
-                    date: date || "Bientôt",
-                    createdAt: Date.now()
-                });
-            } catch (e) {
-                alert("Erreur ajout événement: " + e.message);
-            }
-        };
-
-        // Afficher les événements
-        const qEvents = query(collection(db, "events"), orderBy("createdAt", "desc"));
-        onSnapshot(qEvents, (snap) => {
-            const el = document.getElementById('events-list');
-            el.innerHTML = "";
-            snap.forEach(doc => {
-                const d = doc.data();
-                el.innerHTML += `
-                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-100">
-                        <div>
-                            <p class="text-xs font-bold text-gray-800">${d.title}</p>
-                            <p class="text-[10px] text-gray-500">${d.date}</p>
-                        </div>
-                        <button onclick="window.deleteEvent('${doc.id}')" class="text-gray-300 text-xs"><i class="fa-solid fa-trash"></i></button>
-                    </div>
-                `;
-            });
-            if(snap.empty) el.innerHTML = '<p class="text-xs text-gray-400 text-center">Aucun événement prévu.</p>';
-        });
-
-        window.deleteEvent = async (id) => {
-            if(confirm("Supprimer cet événement ?")) {
-                await deleteDoc(doc(db, "events", id));
-            }
-        }
-
-        // --- 3. CHAT LOGIC ---
-        window.sendMessage = async () => {
-            const input = document.getElementById('chat-input');
-            if(!input.value) return;
-            
-            const chatRef = doc(db, "chat", "main");
-            try {
-                // On essaie d'ajouter au tableau existant
-                await updateDoc(chatRef, {
-                    messages: arrayUnion({ text: input.value, sender: currentUser, time: Date.now() })
-                });
-            } catch (e) {
-                // Si le document n'existe pas, on le crée
-                await setDoc(chatRef, {
-                    messages: [{ text: input.value, sender: currentUser, time: Date.now() }]
-                });
-            }
-            input.value = "";
-        };
-
-        onSnapshot(doc(db, "chat", "main"), (doc) => {
-            const box = document.getElementById('chat-box');
-            if(doc.exists()) {
-                const msgs = doc.data().messages || [];
-                box.innerHTML = msgs.map(m => `
-                    <div class="chat-bubble ${m.sender === currentUser ? 'me' : 'him'}">
-                        ${m.text}
-                    </div>
-                `).join('');
-                box.scrollTop = box.scrollHeight;
-            }
-        });
-
-        // Date du jour
-        document.getElementById('date-display').innerText = new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
-        
-        // Load initial Deen
-        loadDeen();
-
+        render();
     </script>
 </body>
 </html>
