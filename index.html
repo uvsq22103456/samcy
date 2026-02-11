@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAMCY</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600&display=swap');
+        body { background-color: #F8F5F2; font-family: 'Plus Jakarta Sans', sans-serif; color: #4A443F; margin: 0; }
+        .nude-card { background: #FFFFFF; border-radius: 24px; border: 1px solid #EEEAE5; }
+        .btn-nude { background-color: #C4A484; color: white; border-radius: 12px; }
+        #chat-messages { height: 300px; overflow-y: auto; scrollbar-width: none; }
+        .message-samia { align-self: flex-end; background: #C4A484; color: white; border-radius: 15px 15px 2px 15px; }
+        .message-quincy { align-self: flex-start; background: #EAE3DB; color: #4A443F; border-radius: 15px 15px 15px 2px; }
+    </style>
+</head>
+<body class="max-w-md mx-auto min-h-screen pb-24">
+
+    <header class="p-8 pb-4 flex justify-between items-center">
+        <h1 class="text-2xl font-light tracking-widest uppercase">SAM<span class="text-[#C4A484]">CY</span></h1>
+        <div class="text-[10px] uppercase tracking-widest text-gray-400">Pour l'éternité 🤲</div>
+    </header>
+
+    <div id="home-view" class="px-6 space-y-6">
+        <div class="grid grid-cols-2 gap-4">
+            <div class="nude-card p-4 text-center">
+                <p class="text-[10px] uppercase font-bold text-gray-400 mb-2">Samia</p>
+                <div id="display-mood-samia" class="text-2xl">✨</div>
+            </div>
+            <div class="nude-card p-4 text-center">
+                <p class="text-[10px] uppercase font-bold text-gray-400 mb-2">Quincy</p>
+                <div id="display-mood-quincy" class="text-2xl">☕</div>
+            </div>
+        </div>
+
+        <div class="nude-card p-6 shadow-sm">
+            <h3 class="text-xs uppercase tracking-widest font-bold mb-4">Notre Chat</h3>
+            <div id="chat-messages" class="flex flex-col space-y-3 mb-4 p-2 text-sm">
+                </div>
+            <div class="flex gap-2">
+                <input type="text" id="chat-input" placeholder="Écris à ton futur mari..." class="flex-1 bg-[#F8F5F2] border-none rounded-xl p-3 text-sm focus:ring-1 focus:ring-[#C4A484] outline-none">
+                <button id="send-btn" class="btn-nude px-4"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <nav class="fixed bottom-6 left-6 right-6 h-16 nude-card shadow-xl flex justify-around items-center">
+        <button class="text-[#C4A484]"><i class="fas fa-home-alt text-lg"></i></button>
+        <button class="text-gray-300"><i class="fas fa-heart text-lg"></i></button>
+        <button class="text-gray-300"><i class="fas fa-mosque text-lg"></i></button>
+        <button class="text-gray-300"><i class="fas fa-shopping-bag text-lg"></i></button>
+    </nav>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCBZ96lSFIWzPsHklwk3ZU8kfWudfp8oVQ",
+            authDomain: "samcy-1136c.firebaseapp.com",
+            projectId: "samcy-1136c",
+            storageBucket: "samcy-1136c.firebasestorage.app",
+            messagingSenderId: "337821844780",
+            appId: "1:337821844780:web:4a31a07928e36a1f5a5889"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // --- GESTION DU CHAT ---
+        const currentUser = prompt("Es-tu Samia ou Quincy ?").toLowerCase(); // Pour savoir qui écrit
+        const chatInput = document.getElementById('chat-input');
+        const sendBtn = document.getElementById('send-btn');
+        const messagesContainer = document.getElementById('chat-messages');
+
+        // Envoyer un message
+        sendBtn.onclick = async () => {
+            if (chatInput.value.trim() !== "") {
+                await addDoc(collection(db, "messages"), {
+                    text: chatInput.value,
+                    sender: currentUser,
+                    createdAt: serverTimestamp()
+                });
+                chatInput.value = "";
+            }
+        };
+
+        // Lire les messages en temps réel
+        const q = query(collection(db, "messages"), orderBy("createdAt", "asc"));
+        onSnapshot(q, (snapshot) => {
+            messagesContainer.innerHTML = "";
+            snapshot.forEach((doc) => {
+                const msg = doc.data();
+                const div = document.createElement('div');
+                div.className = `p-3 max-w-[80%] ${msg.sender === currentUser ? 'message-samia' : 'message-quincy'}`;
+                div.textContent = msg.text;
+                messagesContainer.appendChild(div);
+            });
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        });
+    </script>
+</body>
+</html>
