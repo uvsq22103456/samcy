@@ -2,61 +2,176 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SAMCY</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>SAMCY Premium</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600&display=swap');
-        body { background-color: #F8F5F2; font-family: 'Plus Jakarta Sans', sans-serif; color: #4A443F; margin: 0; }
-        .nude-card { background: #FFFFFF; border-radius: 24px; border: 1px solid #EEEAE5; }
-        .btn-nude { background-color: #C4A484; color: white; border-radius: 12px; }
-        #chat-messages { height: 300px; overflow-y: auto; scrollbar-width: none; }
-        .message-samia { align-self: flex-end; background: #C4A484; color: white; border-radius: 15px 15px 2px 15px; }
-        .message-quincy { align-self: flex-start; background: #EAE3DB; color: #4A443F; border-radius: 15px 15px 15px 2px; }
+        
+        :root {
+            --nude-dark: #A68A64;
+            --nude-light: #F5EBE0;
+            --bg-soft: #FDFBF9;
+        }
+
+        body { 
+            background-color: var(--bg-soft); 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: #4A443F;
+            overflow: hidden; /* Pour l'effet App mobile */
+        }
+
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-top: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .page {
+            display: none;
+            height: calc(100vh - 80px);
+            overflow-y: auto;
+            padding: 24px;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .page.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-luxe {
+            background: white;
+            border-radius: 30px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(166, 138, 100, 0.08);
+            border: 1px solid rgba(166, 138, 100, 0.05);
+        }
+
+        .chat-bubble {
+            padding: 12px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            max-width: 80%;
+            margin-bottom: 8px;
+        }
+
+        .my-msg { background: var(--nude-dark); color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
+        .their-msg { background: var(--nude-light); color: #4A443F; align-self: flex-start; border-bottom-left-radius: 4px; }
+
+        .active-icon { color: var(--nude-dark) !important; }
+        
+        /* Masquer la scrollbar */
+        .page::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="max-w-md mx-auto min-h-screen pb-24">
+<body>
 
-    <header class="p-8 pb-4 flex justify-between items-center">
-        <h1 class="text-2xl font-light tracking-widest uppercase">SAM<span class="text-[#C4A484]">CY</span></h1>
-        <div class="text-[10px] uppercase tracking-widest text-gray-400">Pour l'éternité 🤲</div>
-    </header>
-
-    <div id="home-view" class="px-6 space-y-6">
-        <div class="grid grid-cols-2 gap-4">
-            <div class="nude-card p-4 text-center">
-                <p class="text-[10px] uppercase font-bold text-gray-400 mb-2">Samia</p>
-                <div id="display-mood-samia" class="text-2xl">✨</div>
-            </div>
-            <div class="nude-card p-4 text-center">
-                <p class="text-[10px] uppercase font-bold text-gray-400 mb-2">Quincy</p>
-                <div id="display-mood-quincy" class="text-2xl">☕</div>
+    <header class="pt-8 px-8 flex justify-between items-center bg-[var(--bg-soft)]">
+        <div>
+            <h1 class="text-xl font-semibold tracking-tighter text-[#4A443F]">SAM<span class="text-[var(--nude-dark)]">CY</span></h1>
+            <div id="status-dot" class="flex items-center gap-1">
+                <div class="w-1.5 h-1.5 bg-green-400 rounded-full"></div>
+                <span class="text-[10px] uppercase tracking-widest text-gray-400 font-bold">Connectés</span>
             </div>
         </div>
+        <div class="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-xs">🤲</div>
+    </header>
 
-        <div class="nude-card p-6 shadow-sm">
-            <h3 class="text-xs uppercase tracking-widest font-bold mb-4">Notre Chat</h3>
-            <div id="chat-messages" class="flex flex-col space-y-3 mb-4 p-2 text-sm">
+    <div id="home" class="page active">
+        <div class="space-y-6">
+            <div class="grid grid-cols-2 gap-4">
+                <div class="card-luxe flex flex-col items-center justify-center space-y-2">
+                    <span class="text-xs font-bold text-gray-300 uppercase">Samia</span>
+                    <span id="mood-samia" class="text-3xl">✨</span>
+                    <button onclick="changeMood('samia')" class="text-[9px] bg-gray-50 px-2 py-1 rounded-full uppercase">Update</button>
                 </div>
-            <div class="flex gap-2">
-                <input type="text" id="chat-input" placeholder="Écris à ton futur mari..." class="flex-1 bg-[#F8F5F2] border-none rounded-xl p-3 text-sm focus:ring-1 focus:ring-[#C4A484] outline-none">
-                <button id="send-btn" class="btn-nude px-4"><i class="fas fa-paper-plane"></i></button>
+                <div class="card-luxe flex flex-col items-center justify-center space-y-2">
+                    <span class="text-xs font-bold text-gray-300 uppercase">Quincy</span>
+                    <span id="mood-quincy" class="text-3xl">☕</span>
+                    <button onclick="changeMood('quincy')" class="text-[9px] bg-gray-50 px-2 py-1 rounded-full uppercase">Update</button>
+                </div>
+            </div>
+
+            <div class="card-luxe">
+                <h3 class="text-sm font-bold mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-kaaba text-[var(--nude-dark)]"></i> Objectif Spirituel
+                </h3>
+                <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
+                    <div class="bg-[var(--nude-dark)] h-full w-[65%]"></div>
+                </div>
+                <p class="text-[11px] mt-2 text-gray-400 text-right">65% de nos objectifs atteints</p>
+            </div>
+
+            <div class="card-luxe bg-[var(--nude-dark)] text-white">
+                <h3 class="text-sm font-semibold opacity-80 text-center uppercase tracking-widest mb-1">Mariage</h3>
+                <div class="text-3xl font-bold text-center">J - 124</div>
             </div>
         </div>
     </div>
 
-    <nav class="fixed bottom-6 left-6 right-6 h-16 nude-card shadow-xl flex justify-around items-center">
-        <button class="text-[#C4A484]"><i class="fas fa-home-alt text-lg"></i></button>
-        <button class="text-gray-300"><i class="fas fa-heart text-lg"></i></button>
-        <button class="text-gray-300"><i class="fas fa-mosque text-lg"></i></button>
-        <button class="text-gray-300"><i class="fas fa-shopping-bag text-lg"></i></button>
+    <div id="chat" class="page">
+        <div class="flex flex-col h-full">
+            <div id="chat-box" class="flex-1 flex flex-col overflow-y-auto mb-4 p-2">
+                </div>
+            <div class="flex gap-2 p-2 bg-white rounded-2xl shadow-inner">
+                <input type="text" id="msg-input" placeholder="Message..." class="flex-1 border-none bg-transparent p-2 outline-none text-sm">
+                <button id="send-btn" class="w-10 h-10 bg-[var(--nude-dark)] text-white rounded-xl flex items-center justify-center">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="wishlist" class="page">
+        <h3 class="text-lg font-semibold mb-4">Notre futur chez-nous 🏠</h3>
+        <div class="grid grid-cols-2 gap-4" id="wishlist-grid">
+            <div class="card-luxe h-40 bg-gray-100 flex items-center justify-center text-gray-400 text-xs italic">Ajouter un meuble</div>
+        </div>
+    </div>
+
+    <div id="logement" class="page">
+        <h3 class="text-lg font-semibold mb-4">Recherche Appart</h3>
+        <div class="space-y-4">
+            <div class="card-luxe flex justify-between items-center">
+                <div>
+                    <h4 class="font-bold text-sm text-gray-700">T3 - Paris 15</h4>
+                    <p class="text-xs text-gray-400">Visite prévue : Samedi</p>
+                </div>
+                <span class="bg-yellow-100 text-yellow-600 text-[10px] px-2 py-1 rounded-full font-bold">EN ATTENTE</span>
+            </div>
+        </div>
+    </div>
+
+    <nav class="fixed bottom-0 left-0 right-0 h-20 glass-nav flex justify-around items-center px-4">
+        <button onclick="showPage('home', this)" class="nav-btn flex flex-col items-center gap-1 active-icon text-gray-400">
+            <i class="fa-solid fa-house-chimney text-xl"></i>
+            <span class="text-[9px] font-bold uppercase">Home</span>
+        </button>
+        <button onclick="showPage('chat', this)" class="nav-btn flex flex-col items-center gap-1 text-gray-400">
+            <i class="fa-solid fa-comment-dots text-xl"></i>
+            <span class="text-[9px] font-bold uppercase">Chat</span>
+        </button>
+        <button onclick="showPage('logement', this)" class="nav-btn flex flex-col items-center gap-1 text-gray-400">
+            <i class="fa-solid fa-key text-xl"></i>
+            <span class="text-[9px] font-bold uppercase">Appart</span>
+        </button>
+        <button onclick="showPage('wishlist', this)" class="nav-btn flex flex-col items-center gap-1 text-gray-400">
+            <i class="fa-solid fa-heart text-xl"></i>
+            <span class="text-[9px] font-bold uppercase">Wish</span>
+        </button>
     </nav>
 
     <script type="module">
+        // Import Firebase
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+        // CONFIG (REMETS TES CLÉS ICI)
         const firebaseConfig = {
             apiKey: "AIzaSyCBZ96lSFIWzPsHklwk3ZU8kfWudfp8oVQ",
             authDomain: "samcy-1136c.firebaseapp.com",
@@ -69,37 +184,52 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // --- GESTION DU CHAT ---
-        const currentUser = prompt("Es-tu Samia ou Quincy ?").toLowerCase(); // Pour savoir qui écrit
-        const chatInput = document.getElementById('chat-input');
-        const sendBtn = document.getElementById('send-btn');
-        const messagesContainer = document.getElementById('chat-messages');
+        // --- NAVIGATION ---
+        window.showPage = (pageId, btn) => {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active-icon'));
+            btn.classList.add('active-icon');
+        };
 
-        // Envoyer un message
+        // --- CHAT LOGIC ---
+        let user = prompt("Qui es-tu ? (Samia/Quincy)").toLowerCase();
+        const chatBox = document.getElementById('chat-box');
+        const input = document.getElementById('msg-input');
+        const sendBtn = document.getElementById('send-btn');
+
         sendBtn.onclick = async () => {
-            if (chatInput.value.trim() !== "") {
+            if (input.value.trim() !== "") {
                 await addDoc(collection(db, "messages"), {
-                    text: chatInput.value,
-                    sender: currentUser,
-                    createdAt: serverTimestamp()
+                    text: input.value,
+                    sender: user,
+                    time: serverTimestamp()
                 });
-                chatInput.value = "";
+                input.value = "";
             }
         };
 
-        // Lire les messages en temps réel
-        const q = query(collection(db, "messages"), orderBy("createdAt", "asc"));
-        onSnapshot(q, (snapshot) => {
-            messagesContainer.innerHTML = "";
-            snapshot.forEach((doc) => {
-                const msg = doc.data();
+        const q = query(collection(db, "messages"), orderBy("time", "asc"));
+        onSnapshot(q, (snap) => {
+            chatBox.innerHTML = "";
+            snap.forEach(doc => {
+                const m = doc.data();
                 const div = document.createElement('div');
-                div.className = `p-3 max-w-[80%] ${msg.sender === currentUser ? 'message-samia' : 'message-quincy'}`;
-                div.textContent = msg.text;
-                messagesContainer.appendChild(div);
+                div.className = `chat-bubble ${m.sender === user ? 'my-msg' : 'their-msg'}`;
+                div.textContent = m.text;
+                chatBox.appendChild(div);
             });
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            chatBox.scrollTop = chatBox.scrollHeight;
         });
+
+        // --- MOOD LOGIC (Simulé pour l'exemple) ---
+        window.changeMood = (person) => {
+            const moods = ['✨','☁️','🤲','☕','❤️','😴'];
+            const random = moods[Math.floor(Math.random()*moods.length)];
+            document.getElementById(`mood-${person}`).innerText = random;
+        };
+
     </script>
 </body>
 </html>
