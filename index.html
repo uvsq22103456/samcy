@@ -3,159 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SAMCY APP</title>
+    <title>SAMCY OS v3</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
-        
-        :root {
-            --primary: #A68A64; /* Nude foncé */
-            --secondary: #E6DCD3; /* Nude clair */
-            --bg: #F9F7F5;
-            --white: #FFFFFF;
-        }
-
-        body { 
-            background-color: var(--bg); 
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            color: #4A443F;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        /* --- NAVIGATION --- */
-        .page { display: none; padding: 20px 20px 100px 20px; animation: fadeIn 0.3s ease; height: 100vh; overflow-y: auto; }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap');
+        :root { --nude: #A68A64; --bg: #F8F5F2; --card: #FFFFFF; }
+        body { background: var(--bg); font-family: 'Plus Jakarta Sans', sans-serif; color: #4A443F; }
+        .page { display: none; padding: 20px 20px 120px; height: 100vh; overflow-y: auto; animation: fadeIn 0.3s ease; }
         .page.active { display: block; }
-        
-        .nav-bar {
-            position: fixed; bottom: 20px; left: 20px; right: 20px;
-            background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(15px);
-            border-radius: 25px; height: 70px;
-            display: flex; justify-content: space-around; align-items: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08); border: 1px solid rgba(255,255,255,0.5);
-            z-index: 1000;
-        }
-        .nav-icon { font-size: 20px; color: #CCC; transition: 0.2s; }
-        .nav-icon.active { color: var(--primary); transform: translateY(-3px); }
-
-        /* --- CARDS & UI --- */
-        .card { background: white; border-radius: 20px; padding: 16px; margin-bottom: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
-        
-        .btn-add {
-            background: var(--primary); color: white; border-radius: 12px;
-            padding: 8px 16px; font-size: 12px; font-weight: bold;
-        }
-
-        /* Wishlist Grid */
-        .wish-grid { display: grid; grid-cols-2 gap-3; }
-        .wish-item { background: white; border-radius: 15px; overflow: hidden; position: relative; }
-        .wish-img { width: 100%; h-32; object-fit: cover; background: #eee; }
-
-        /* Checkbox Custom */
-        .checkbox-wrapper input:checked + div { background: var(--primary); border-color: var(--primary); }
-        .checkbox-wrapper input:checked + div svg { display: block; }
-
-        /* Journal */
-        .journal-bad { border-left: 3px solid #ffb3b3; background: #fff5f5; }
-        .journal-good { border-left: 3px solid #b3ffb3; background: #f5fff5; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .ios-card { background: var(--card); border-radius: 24px; padding: 18px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); margin-bottom: 15px; border: 1px solid rgba(166,138,100,0.08); }
+        .nav-bar { position: fixed; bottom: 25px; left: 20px; right: 20px; background: rgba(255,255,255,0.9); backdrop-filter: blur(15px); border-radius: 30px; height: 70px; display: flex; justify-content: space-around; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.08); z-index: 1000; }
+        .nav-btn { color: #CCC; font-size: 22px; transition: 0.3s; }
+        .nav-btn.active { color: var(--nude); transform: translateY(-3px); }
+        .mood-btn { font-size: 28px; transition: 0.2s; opacity: 0.4; }
+        .mood-btn.selected { opacity: 1; transform: scale(1.2); }
+        .budget-row { display: grid; grid-template-columns: 1fr 60px 60px; gap: 10px; font-size: 12px; padding: 8px 0; border-bottom: 1px solid #F0EBE6; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
     <div id="home" class="page active">
-        <header class="flex justify-between items-center mb-6 pt-4">
-            <div>
-                <h1 class="text-2xl font-bold text-[#4A443F]">Bonjour <span id="user-name">...</span></h1>
-                <p class="text-xs text-gray-400 uppercase tracking-widest">En route vers le mariage</p>
-            </div>
-            <div onclick="switchIdentity()" class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-xs cursor-pointer">👤</div>
-        </header>
-
-        <div class="grid grid-cols-2 gap-3 mb-6">
-            <div onclick="changeMood('samia')" class="card text-center active:scale-95 transition">
-                <p class="text-[10px] font-bold uppercase text-gray-400">Samia</p>
-                <div id="mood-samia" class="text-4xl my-2">😶</div>
-            </div>
-            <div onclick="changeMood('quincy')" class="card text-center active:scale-95 transition">
-                <p class="text-[10px] font-bold uppercase text-gray-400">Quincy</p>
-                <div id="mood-quincy" class="text-4xl my-2">😶</div>
+        <h1 class="text-2xl font-bold mb-6">Hello Samcy 👋</h1>
+        
+        <div class="ios-card">
+            <p class="text-[10px] font-bold uppercase text-gray-400 mb-4 tracking-widest text-center">Ton Mood Actuel</p>
+            <div class="flex justify-around items-center" id="mood-selector">
+                <button onclick="updateMood('😊')" class="mood-btn">😊</button>
+                <button onclick="updateMood('🤲')" class="mood-btn">🤲</button>
+                <button onclick="updateMood('💍')" class="mood-btn">💍</button>
+                <button onclick="updateMood('😴')" class="mood-btn">😴</button>
+                <button onclick="updateMood('😤')" class="mood-btn">😤</button>
             </div>
         </div>
 
-        <div class="card">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="font-bold text-sm"><i class="fa-regular fa-calendar mr-2"></i>Calendrier</h3>
-                <button onclick="addCalendarEvent()" class="text-xs bg-[#F3EFEA] text-[#8E735B] px-3 py-1 rounded-full font-bold">+ Ajouter</button>
+        <div class="ios-card bg-[#A68A64] text-white">
+            <p class="text-[10px] uppercase font-bold opacity-80">Total Économies</p>
+            <h2 class="text-3xl font-bold" id="total-savings">0€</h2>
+            <div class="flex mt-4 gap-2">
+                <input type="number" id="save-amount" placeholder="Ajouter..." class="bg-white/20 border-none rounded-lg p-2 text-sm w-full placeholder:text-white/50 outline-none">
+                <button onclick="addSavings()" class="bg-white text-[#A68A64] px-4 rounded-lg font-bold">+</button>
             </div>
-            <div id="calendar-list" class="space-y-3">
-                <p class="text-center text-gray-300 text-xs py-4">Rien de prévu pour l'instant...</p>
+            <div id="savings-history" class="mt-4 text-[10px] space-y-1 opacity-80 overflow-y-auto max-h-20">
+                </div>
+        </div>
+
+        <div class="ios-card">
+            <div class="flex justify-between mb-4">
+                <h3 class="font-bold text-sm">Calendrier Projet</h3>
+                <span class="text-[10px] text-gray-400" id="current-month">Février 2026</span>
             </div>
+            <div class="grid grid-cols-7 gap-1 text-[10px] text-center font-bold text-gray-400 mb-2">
+                <span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span>
+            </div>
+            <div class="grid grid-cols-7 gap-1" id="calendar-grid">
+                </div>
         </div>
     </div>
 
-    <div id="deen" class="page">
-        <h2 class="text-xl font-bold mb-6 pt-4 text-center">Notre Spiritualité 🤲</h2>
+    <div id="islam" class="page">
+        <h2 class="text-xl font-bold mb-6">Ma Progression 🌙</h2>
         
-        <div class="flex justify-center gap-4 mb-6">
-            <button onclick="setDeenView('samia')" id="tab-deen-samia" class="px-4 py-1 rounded-full text-xs font-bold bg-[#A68A64] text-white">Samia</button>
-            <button onclick="setDeenView('quincy')" id="tab-deen-quincy" class="px-4 py-1 rounded-full text-xs font-bold bg-white text-gray-400">Quincy</button>
+        <div class="grid grid-cols-2 gap-4 mb-6">
+            <div class="ios-card text-center">
+                <p class="text-[10px] font-bold text-gray-400">VERSETS APPRIS</p>
+                <div class="text-3xl font-bold my-2" id="v-count">0</div>
+                <div class="flex justify-center gap-4">
+                    <button onclick="changeIslamCount('versets', -1)" class="w-8 h-8 rounded-full border">-</button>
+                    <button onclick="changeIslamCount('versets', 1)" class="w-8 h-8 rounded-full bg-[#A68A64] text-white">+</button>
+                </div>
+            </div>
+            <div class="ios-card text-center">
+                <p class="text-[10px] font-bold text-gray-400">PAGES LUES</p>
+                <div class="text-3xl font-bold my-2" id="p-count">0</div>
+                <div class="flex justify-center gap-4">
+                    <button onclick="changeIslamCount('pages', -1)" class="w-8 h-8 rounded-full border">-</button>
+                    <button onclick="changeIslamCount('pages', 1)" class="w-8 h-8 rounded-full bg-[#A68A64] text-white">+</button>
+                </div>
+            </div>
         </div>
 
-        <div class="card">
-            <div id="prayer-list" class="space-y-4">
-                </div>
+        <div class="ios-card">
+            <h3 class="font-bold text-sm mb-4">Doua pour nous 🤲</h3>
+            <textarea id="daily-dua" class="w-full bg-[#FDFBF9] rounded-xl p-4 text-sm italic outline-none h-32" placeholder="Écris ta Doua du jour pour Samcy..."></textarea>
+            <button onclick="saveDua()" class="w-full mt-2 py-3 bg-[#A68A64] text-white rounded-xl font-bold text-xs">Enregistrer</button>
         </div>
+    </div>
+
+    <div id="budgets" class="page">
+        <h2 class="text-xl font-bold mb-6">Nos Budgets 💸</h2>
+        
+        <details class="ios-card" open>
+            <summary class="font-bold text-sm cursor-pointer outline-none">💍 Budget Mariage</summary>
+            <div class="mt-4">
+                <div class="budget-row font-bold opacity-50"><span>Prestation</span><span>Prévu</span><span>Payé</span></div>
+                <div id="wedding-list">
+                    </div>
+                <button onclick="addBudgetItem('wedding')" class="w-full text-[10px] py-2 mt-2 border-dashed border rounded-lg opacity-50">+ Ajouter ligne</button>
+            </div>
+        </details>
+
+        <details class="ios-card">
+            <summary class="font-bold text-sm cursor-pointer outline-none">🏠 Budget Appartement</summary>
+            <div class="mt-4">
+                <div class="budget-row font-bold opacity-50"><span>Meuble</span><span>Prévu</span><span>Payé</span></div>
+                <div id="housing-list"></div>
+                <button onclick="addBudgetItem('housing')" class="w-full text-[10px] py-2 mt-2 border-dashed border rounded-lg opacity-50">+ Ajouter ligne</button>
+            </div>
+        </details>
     </div>
 
     <div id="couple" class="page">
-        <h2 class="text-xl font-bold mb-4 pt-4">Espace Couple ❤️</h2>
+        <h2 class="text-xl font-bold mb-4">Espace Samcy ❤️</h2>
         
-        <div class="card bg-[#FDFBF7] border border-[#E6DCD3]">
-            <div class="flex justify-between items-center mb-3">
-                <h3 class="font-bold text-sm">Sondages</h3>
-                <button onclick="createPoll()" class="text-[10px] underline text-gray-500">Nouveau</button>
+        <div class="ios-card bg-orange-50/50">
+            <p class="text-xs font-bold mb-3">Sondage Photo Flash 📸</p>
+            <div class="grid grid-cols-2 gap-2 mb-3">
+                <div class="h-24 bg-gray-200 rounded-xl flex items-center justify-center text-[10px] text-center p-2 border-2 border-white" id="poll-img-1">Photo A</div>
+                <div class="h-24 bg-gray-200 rounded-xl flex items-center justify-center text-[10px] text-center p-2 border-2 border-white" id="poll-img-2">Photo B</div>
             </div>
-            <div id="polls-list" class="space-y-2">
+            <div class="flex gap-2">
+                <button onclick="vote('A')" class="flex-1 py-2 bg-white rounded-lg text-xs font-bold shadow-sm">Je préfère A</button>
+                <button onclick="vote('B')" class="flex-1 py-2 bg-white rounded-lg text-xs font-bold shadow-sm">Je préfère B</button>
+            </div>
+        </div>
+
+        <div class="ios-card">
+            <h3 class="font-bold text-sm mb-4">Accord / Désaccord ⚖️</h3>
+            <div id="decision-list" class="space-y-3">
                 </div>
+            <button onclick="addDecision()" class="w-full mt-4 py-2 border rounded-xl text-xs">+ Nouvelle proposition</button>
         </div>
-
-        <h3 class="font-bold text-sm mb-2 mt-6">Journal de bord</h3>
-        <div class="flex gap-2 mb-4">
-            <button onclick="addJournalEntry('love')" class="flex-1 bg-white border border-green-100 py-2 rounded-xl text-xs font-bold text-green-600 shadow-sm">💚 Ce qui va</button>
-            <button onclick="addJournalEntry('improve')" class="flex-1 bg-white border border-red-100 py-2 rounded-xl text-xs font-bold text-red-400 shadow-sm">☁️ À améliorer</button>
-        </div>
-        <div id="journal-list" class="space-y-3 pb-20">
-            </div>
-    </div>
-
-    <div id="wish" class="page">
-        <h2 class="text-xl font-bold mb-4 pt-4">Wishlist 🎁</h2>
-        
-        <div class="flex mb-4 border-b border-gray-200">
-            <button onclick="setWishTab('samia')" id="wtab-samia" class="flex-1 pb-2 text-sm font-bold text-[#A68A64] border-b-2 border-[#A68A64]">Samia</button>
-            <button onclick="setWishTab('quincy')" id="wtab-quincy" class="flex-1 pb-2 text-sm font-bold text-gray-400">Quincy</button>
-        </div>
-
-        <button onclick="addToWishlist()" class="w-full py-3 bg-[#E6DCD3] rounded-xl text-[#8E735B] font-bold text-xs mb-4 border border-dashed border-[#A68A64]">+ Ajouter un article</button>
-
-        <div id="wishlist-grid" class="wish-grid">
-            </div>
     </div>
 
     <nav class="nav-bar">
-        <i onclick="navTo('home', this)" class="fa-solid fa-house nav-icon active"></i>
-        <i onclick="navTo('deen', this)" class="fa-solid fa-kaaba nav-icon"></i>
-        <i onclick="navTo('couple', this)" class="fa-solid fa-heart nav-icon"></i>
-        <i onclick="navTo('wish', this)" class="fa-solid fa-gift nav-icon"></i>
+        <button onclick="nav('home', this)" class="nav-btn active"><i class="fa-solid fa-house"></i></button>
+        <button onclick="nav('islam', this)" class="nav-btn"><i class="fa-solid fa-moon"></i></button>
+        <button onclick="nav('budgets', this)" class="nav-btn"><i class="fa-solid fa-wallet"></i></button>
+        <button onclick="nav('couple', this)" class="nav-btn"><i class="fa-solid fa-heart"></i></button>
     </nav>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, doc, setDoc, onSnapshot, collection, addDoc, updateDoc, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, onSnapshot, collection, addDoc, updateDoc, query, orderBy, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // --- ⚠️ REMPLACE TES CLÉS ICI (Sinon ça ne marche pas) ---
+        // CONFIG (Tes clés Firebase)
         const firebaseConfig = {
             apiKey: "AIzaSyCBZ96lSFIWzPsHklwk3ZU8kfWudfp8oVQ",
             authDomain: "samcy-1136c.firebaseapp.com",
@@ -167,236 +160,115 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const user = localStorage.getItem('samcy_user') || prompt("Qui es-tu ? (samia/quincy)");
+        localStorage.setItem('samcy_user', user);
 
-        // --- GESTION UTILISATEUR ---
-        let currentUser = localStorage.getItem('samcy_user');
-        if (!currentUser) {
-            currentUser = prompt("Qui es-tu ? (samia ou quincy)").toLowerCase().trim();
-            localStorage.setItem('samcy_user', currentUser);
-        }
-        document.getElementById('user-name').innerText = currentUser.charAt(0).toUpperCase() + currentUser.slice(1);
-
-        window.switchIdentity = () => {
-            localStorage.removeItem('samcy_user');
-            location.reload();
-        }
-
-        // --- NAVIGATION ---
-        window.navTo = (pageId, btn) => {
+        // NAVIGATION
+        window.nav = (id, btn) => {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
-            document.querySelectorAll('.nav-icon').forEach(i => i.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
         };
 
-        // --- 1. MOODS ---
-        window.changeMood = async (person) => {
-            if (person !== currentUser) return alert("Tu ne peux pas changer l'humeur de " + person + " !");
-            const emojis = ['😍','😊','☁️','😤','😴','🤲','💍','☕'];
-            const choice = prompt("Choisis ton humeur :\n" + emojis.join(" "));
-            if (emojis.includes(choice)) {
-                await setDoc(doc(db, "moods", person), { emoji: choice });
+        // 1. MOODS (Changement direct)
+        window.updateMood = async (emoji) => {
+            await setDoc(doc(db, "moods", user), { emoji });
+        };
+        onSnapshot(doc(db, "moods", user), (d) => {
+            if(d.exists()) {
+                document.querySelectorAll('.mood-btn').forEach(b => {
+                    b.classList.toggle('selected', b.innerText === d.data().emoji);
+                });
             }
-        };
-        onSnapshot(doc(db, "moods", "samia"), d => { if(d.exists()) document.getElementById('mood-samia').innerText = d.data().emoji });
-        onSnapshot(doc(db, "moods", "quincy"), d => { if(d.exists()) document.getElementById('mood-quincy').innerText = d.data().emoji });
-
-        // --- 2. CALENDRIER ---
-        window.addCalendarEvent = async () => {
-            const title = prompt("Titre de l'événement :");
-            const date = prompt("Date (ex: 20 Mars) :");
-            if (title && date) {
-                await addDoc(collection(db, "calendar"), { title, date, done: false, createdAt: Date.now() });
-            }
-        };
-
-        window.toggleEvent = async (id, currentState) => {
-            await updateDoc(doc(db, "calendar", id), { done: !currentState });
-        };
-
-        onSnapshot(query(collection(db, "calendar"), orderBy("createdAt", "desc")), (snap) => {
-            const list = document.getElementById('calendar-list');
-            list.innerHTML = "";
-            if (snap.empty) list.innerHTML = '<p class="text-center text-gray-300 text-xs py-4">Rien de prévu...</p>';
-            
-            snap.forEach(docSnap => {
-                const item = docSnap.data();
-                list.innerHTML += `
-                    <div class="flex items-center justify-between p-3 rounded-xl border ${item.done ? 'bg-gray-100 opacity-50' : 'bg-[#FAF9F6] border-[#E6DCD3]'}">
-                        <div class="flex items-center gap-3">
-                            <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleEvent('${docSnap.id}', ${item.done})" class="w-5 h-5 accent-[#A68A64]">
-                            <div>
-                                <p class="text-sm font-bold ${item.done ? 'line-through text-gray-400' : 'text-[#4A443F]'}">${item.title}</p>
-                                <p class="text-[10px] text-gray-400">${item.date}</p>
-                            </div>
-                        </div>
-                        <button onclick="deleteDocItem('calendar', '${docSnap.id}')" class="text-gray-300"><i class="fa-solid fa-trash text-xs"></i></button>
-                    </div>
-                `;
-            });
         });
 
-        // --- 3. SPIRITUEL ---
-        let currentDeenView = currentUser;
-        const today = new Date().toISOString().split('T')[0];
-
-        window.setDeenView = (user) => {
-            currentDeenView = user;
-            document.getElementById('tab-deen-samia').className = user === 'samia' ? 'px-4 py-1 rounded-full text-xs font-bold bg-[#A68A64] text-white' : 'px-4 py-1 rounded-full text-xs font-bold bg-white text-gray-400';
-            document.getElementById('tab-deen-quincy').className = user === 'quincy' ? 'px-4 py-1 rounded-full text-xs font-bold bg-[#A68A64] text-white' : 'px-4 py-1 rounded-full text-xs font-bold bg-white text-gray-400';
-            loadDeen();
+        // 2. SAVINGS
+        window.addSavings = async () => {
+            const amount = parseFloat(document.getElementById('save-amount').value);
+            if(!amount) return;
+            await addDoc(collection(db, "savings"), { amount, user, date: new Date().toLocaleDateString() });
+            document.getElementById('save-amount').value = "";
         };
-
-        const prayers = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha', 'Coran', 'Duas'];
-        
-        function loadDeen() {
-            onSnapshot(doc(db, "spiritual", `${today}_${currentDeenView}`), (docSnap) => {
-                const data = docSnap.exists() ? docSnap.data() : {};
-                const container = document.getElementById('prayer-list');
-                container.innerHTML = "";
-                
-                prayers.forEach(p => {
-                    const isDone = data[p] || false;
-                    container.innerHTML += `
-                        <div class="flex justify-between items-center py-2 border-b border-gray-100 last:border-0">
-                            <span class="text-sm font-medium ${isDone ? 'text-[#A68A64]' : 'text-gray-600'}">${p}</span>
-                            <div class="relative w-6 h-6">
-                                <input type="checkbox" ${isDone ? 'checked' : ''} 
-                                    onchange="toggleDeen('${p}', ${isDone})"
-                                    class="w-6 h-6 appearance-none border-2 border-gray-300 rounded-full checked:bg-[#A68A64] checked:border-[#A68A64] transition cursor-pointer">
-                                <i class="fa-solid fa-check text-white text-xs absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none ${isDone ? 'block' : 'hidden'}"></i>
-                            </div>
-                        </div>
-                    `;
-                });
-            });
-        }
-        
-        window.toggleDeen = async (item, state) => {
-            if (currentDeenView !== currentUser) return alert("Tu ne peux pas cocher pour l'autre !");
-            await setDoc(doc(db, "spiritual", `${today}_${currentUser}`), { [item]: !state }, { merge: true });
-        }
-        loadDeen(); // Init
-
-        // --- 4. COUPLE (Journal & Sondages) ---
-        window.createPoll = async () => {
-            const question = prompt("Question du sondage ?");
-            if(question) {
-                await addDoc(collection(db, "polls"), { 
-                    question, 
-                    votesSamia: false, 
-                    votesQuincy: false,
-                    createdAt: Date.now() 
-                });
-            }
-        };
-
-        window.votePoll = async (id, voteType) => { // voteType: 'yes' or 'no'
-             // Simplification: Toggle vote. Dans une vraie app on ferait mieux.
-             const pollRef = doc(db, "polls", id);
-             if (currentUser === 'samia') await updateDoc(pollRef, { votesSamia: voteType });
-             if (currentUser === 'quincy') await updateDoc(pollRef, { votesQuincy: voteType });
-        };
-
-        onSnapshot(query(collection(db, "polls"), orderBy("createdAt", "desc")), snap => {
-            const div = document.getElementById('polls-list');
-            div.innerHTML = "";
+        onSnapshot(collection(db, "savings"), (snap) => {
+            let total = 0;
+            let hist = "";
             snap.forEach(d => {
-                const p = d.data();
-                div.innerHTML += `
-                    <div class="p-3 bg-white rounded-xl border border-gray-100 text-sm">
-                        <p class="font-bold mb-2">${p.question}</p>
-                        <div class="flex justify-between text-xs text-gray-500">
-                            <span>S: ${p.votesSamia ? '✅' : '⏳'}</span>
-                            <span>Q: ${p.votesQuincy ? '✅' : '⏳'}</span>
-                        </div>
-                        <div class="flex gap-2 mt-2">
-                             <button onclick="votePoll('${d.id}', true)" class="flex-1 bg-green-50 text-green-600 py-1 rounded">Oui</button>
-                             <button onclick="votePoll('${d.id}', false)" class="flex-1 bg-red-50 text-red-600 py-1 rounded">Non</button>
-                             <button onclick="deleteDocItem('polls', '${d.id}')" class="text-gray-300 px-2"><i class="fa-solid fa-times"></i></button>
-                        </div>
-                    </div>
-                `;
+                total += d.data().amount;
+                hist += `<div>+ ${d.data().amount}€ par ${d.data().user} (${d.data().date})</div>`;
             });
+            document.getElementById('total-savings').innerText = total + "€";
+            document.getElementById('savings-history').innerHTML = hist;
         });
 
-        window.addJournalEntry = async (type) => {
-            const txt = prompt(type === 'love' ? "Qu'est-ce qui va bien ?" : "Qu'est-ce qu'on doit améliorer ?");
-            if (txt) {
-                await addDoc(collection(db, "journal"), { text: txt, type, user: currentUser, createdAt: Date.now() });
-            }
-        };
-
-        onSnapshot(query(collection(db, "journal"), orderBy("createdAt", "desc")), snap => {
-            const div = document.getElementById('journal-list');
-            div.innerHTML = "";
-            snap.forEach(d => {
-                const j = d.data();
-                div.innerHTML += `
-                    <div class="p-3 rounded-xl mb-2 text-sm ${j.type === 'love' ? 'journal-good' : 'journal-bad'} relative group">
-                        <p class="font-bold text-xs opacity-50 uppercase mb-1">${j.user}</p>
-                        <p>${j.text}</p>
-                        <button onclick="deleteDocItem('journal', '${d.id}')" class="absolute top-2 right-2 text-gray-300 opacity-0 group-hover:opacity-100"><i class="fa-solid fa-trash"></i></button>
-                    </div>
-                `;
-            });
-        });
-
-        // --- 5. WISHLIST ---
-        let currentWishTab = currentUser;
-        window.setWishTab = (user) => {
-            currentWishTab = user;
-            document.getElementById('wtab-samia').className = user === 'samia' ? 'flex-1 pb-2 text-sm font-bold text-[#A68A64] border-b-2 border-[#A68A64]' : 'flex-1 pb-2 text-sm font-bold text-gray-400';
-            document.getElementById('wtab-quincy').className = user === 'quincy' ? 'flex-1 pb-2 text-sm font-bold text-[#A68A64] border-b-2 border-[#A68A64]' : 'flex-1 pb-2 text-sm font-bold text-gray-400';
-            renderWishlist();
-        };
-
-        let allWishes = [];
-        onSnapshot(collection(db, "wishlist"), snap => {
-            allWishes = [];
-            snap.forEach(d => allWishes.push({id: d.id, ...d.data()}));
-            renderWishlist();
-        });
-
-        function renderWishlist() {
-            const grid = document.getElementById('wishlist-grid');
-            grid.innerHTML = "";
-            const filtered = allWishes.filter(w => w.owner === currentWishTab);
-            
-            if(filtered.length === 0) grid.innerHTML = "<p class='col-span-2 text-center text-xs text-gray-400'>Liste vide</p>";
-
-            filtered.forEach(w => {
-                grid.innerHTML += `
-                    <div class="wish-item">
-                        <img src="${w.img}" class="wish-img" onerror="this.src='https://via.placeholder.com/150'">
-                        <div class="p-2">
-                            <p class="font-bold text-xs truncate">${w.name}</p>
-                            <div class="flex justify-between items-center mt-1">
-                                <span class="text-[10px] text-gray-500">${w.price}€</span>
-                                <button onclick="deleteDocItem('wishlist', '${w.id}')" class="text-red-300"><i class="fa-solid fa-trash text-xs"></i></button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
+        // 3. CALENDRIER (Génération du mois actuel)
+        const grid = document.getElementById('calendar-grid');
+        for(let i=1; i<=28; i++) {
+            grid.innerHTML += `<div class="aspect-square bg-gray-50 rounded-lg flex items-center justify-center text-[10px] hover:bg-orange-100">${i}</div>`;
         }
 
-        window.addToWishlist = async () => {
-            if (currentWishTab !== currentUser) return alert("Tu ne peux pas ajouter à sa liste !");
-            const name = prompt("Nom de l'objet ?");
-            const price = prompt("Prix approximatif ?");
-            const img = prompt("Lien de l'image (URL) - Copie depuis Google Images :");
-            
-            if(name) {
-                await addDoc(collection(db, "wishlist"), {
-                    name, price: price || "0", img: img || "", owner: currentUser
-                });
-            }
+        // 4. ISLAM COUNTER
+        window.changeIslamCount = async (type, val) => {
+            const ref = doc(db, "islam", user);
+            const d = await getDocs(collection(db, "islam")); // simplifé
+            await setDoc(ref, { [type]: (window[type] || 0) + val }, { merge: true });
         };
+        onSnapshot(doc(db, "islam", user), d => {
+            if(d.exists()){
+                window.versets = d.data().versets || 0;
+                window.pages = d.data().pages || 0;
+                document.getElementById('v-count').innerText = window.versets;
+                document.getElementById('p-count').innerText = window.pages;
+            }
+        });
 
-        // --- GLOBAL DELETE ---
-        window.deleteDocItem = async (col, id) => {
-            if(confirm("Supprimer ?")) await deleteDoc(doc(db, col, id));
+        // 5. BUDGETS
+        window.addBudgetItem = async (cat) => {
+            const name = prompt("Nom de la prestation/objet :");
+            const prevu = prompt("Budget prévu (€) :");
+            if(name) await addDoc(collection(db, "budget_" + cat), { name, prevu, paye: 0 });
+        };
+        const loadBudget = (cat, id) => {
+            onSnapshot(collection(db, "budget_" + cat), snap => {
+                let html = "";
+                snap.forEach(d => {
+                    const data = d.data();
+                    html += `<div class="budget-row">
+                        <span>${data.name}</span>
+                        <span>${data.prevu}€</span>
+                        <input type="number" onchange="updatePaye('${cat}','${d.id}', this.value)" class="w-12 bg-gray-50 border-none outline-none text-right" value="${data.paye}">
+                    </div>`;
+                });
+                document.getElementById(id).innerHTML = html;
+            });
+        };
+        window.updatePaye = async (cat, id, val) => {
+            await updateDoc(doc(db, "budget_" + cat, id), { paye: val });
+        };
+        loadBudget('wedding', 'wedding-list');
+        loadBudget('housing', 'housing-list');
+
+        // 6. ACCORD / DESACCORD
+        window.addDecision = async () => {
+            const txt = prompt("Ta proposition (ex: Mur bleu salon) :");
+            if(txt) await addDoc(collection(db, "decisions"), { txt, samia: null, quincy: null });
+        };
+        onSnapshot(collection(db, "decisions"), snap => {
+            const el = document.getElementById('decision-list');
+            el.innerHTML = "";
+            snap.forEach(d => {
+                const data = d.data();
+                el.innerHTML += `<div class="p-3 bg-white border rounded-xl flex justify-between items-center text-xs">
+                    <span class="font-bold">${data.txt}</span>
+                    <div class="flex gap-2">
+                        <button onclick="voteDec('${d.id}','ok')" class="px-2 py-1 rounded bg-green-50 text-green-600">D'accord</button>
+                        <button onclick="voteDec('${d.id}','no')" class="px-2 py-1 rounded bg-red-50 text-red-600">Pas d'accord</button>
+                    </div>
+                </div>`;
+            });
+        });
+        window.voteDec = async (id, val) => {
+            await updateDoc(doc(db, "decisions", id), { [user]: val });
         };
 
     </script>
