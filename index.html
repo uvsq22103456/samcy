@@ -3,32 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SAMCY - Union & Deen</title>
+    <title>SAMCY - Notre Vie</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
         :root { --primary: #A68A64; --bg: #F9F7F5; --text: #4A443F; }
         body { font-family: 'Outfit', sans-serif; background-color: var(--bg); color: var(--text); height: 100dvh; display: flex; flex-direction: column; overflow: hidden; -webkit-tap-highlight-color: transparent; }
         
-        .btn-primary { background: var(--primary); color: white; font-weight: 800; padding: 14px; border-radius: 14px; text-transform: uppercase; width: 100%; letter-spacing: 0.5px; box-shadow: 0 4px 15px rgba(166, 138, 100, 0.2); border: none; }
+        .btn-primary { background: var(--primary); color: white; font-weight: 800; padding: 14px; border-radius: 14px; text-transform: uppercase; width: 100%; letter-spacing: 0.5px; box-shadow: 0 4px 15px rgba(166, 138, 100, 0.2); border: none; cursor: pointer; }
         .input-style { background: #fff; border: 1px solid #E6DCD3; width: 100%; padding: 14px; border-radius: 14px; outline: none; font-weight: 600; margin-bottom: 8px; font-size: 13px; }
         .card { background: #fff; padding: 16px; border-radius: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.8); position: relative; }
         
         .nav-btn { opacity: 0.4; transition: 0.2s; display: flex; flex-direction: column; align-items: center; gap: 2px; color: var(--text); }
         .nav-active { opacity: 1; color: var(--primary); transform: translateY(-2px); }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
         
         /* Moods */
         .mood-btn { font-size: 30px; opacity: 0.3; transition: 0.3s; filter: grayscale(1); }
         .mood-active { opacity: 1; filter: grayscale(0); transform: scale(1.2); }
 
         /* Calendar */
-        .calendar-day { aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; border-radius: 10px; position: relative; }
+        .calendar-day { aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; border-radius: 10px; position: relative; }
         .today { background: var(--primary); color: white; }
         .selected-day { border: 2px solid var(--primary); }
         .has-event::after { content: ''; position: absolute; bottom: 4px; width: 4px; height: 4px; background: var(--primary); border-radius: 50%; }
@@ -39,17 +37,21 @@
 </head>
 <body>
 
-    <section id="auth-view" class="absolute inset-0 z-50 flex flex-col justify-center px-8 bg-[#F9F7F5]">
-        <div class="text-center mb-10"><h1 class="text-5xl font-black italic tracking-tighter text-[#A68A64]">SAMCY</h1><p class="text-xs font-bold uppercase text-[#C4A484] mt-2">Notre futur commence ici</p></div>
-        <input type="email" id="email" placeholder="Email..." class="input-style">
-        <input type="password" id="password" placeholder="Mot de passe..." class="input-style">
-        <button id="btn-login" class="btn-primary mt-4">Entrer</button>
+    <section id="profile-view" class="absolute inset-0 z-[100] flex flex-col justify-center px-8 bg-[#F9F7F5]">
+        <div class="text-center mb-10">
+            <h1 class="text-5xl font-black italic tracking-tighter text-[#A68A64]">SAMCY</h1>
+            <p class="text-xs font-bold uppercase text-[#C4A484] mt-2">C'est qui ?</p>
+        </div>
+        <div class="flex flex-col gap-4">
+            <button onclick="setProfile('samia')" class="btn-primary">Samia ✨</button>
+            <button onclick="setProfile('quincy')" class="btn-primary bg-slate-800">Quincy 💍</button>
+        </div>
     </section>
 
     <div id="app-view" class="hidden flex-col h-full relative">
         <header class="px-6 py-4 flex justify-between items-center bg-white/80 backdrop-blur-md border-b border-[#E6DCD3]">
             <h2 class="font-black italic text-lg text-[#A68A64]">SAMCY</h2>
-            <button id="btn-logout" class="bg-gray-50 text-gray-400 p-2 rounded-full"><i data-lucide="log-out" class="w-4 h-4"></i></button>
+            <button onclick="logout()" class="text-[10px] font-bold text-gray-400 bg-gray-50 px-3 py-1 rounded-full">Changer</button>
         </header>
 
         <main class="flex-1 overflow-hidden relative">
@@ -71,32 +73,31 @@
                 </div>
 
                 <div class="card bg-[#A68A64] text-white border-none shadow-lg">
-                    <p class="text-[10px] font-bold uppercase opacity-80 mb-1">Cagnotte Commune</p>
+                    <p class="text-[10px] font-bold uppercase opacity-80 mb-1">Notre Cagnotte</p>
                     <div class="flex justify-between items-end mb-4">
                         <h3 id="total-savings" class="font-black text-3xl">0 €</h3>
-                        <button onclick="addMoney()" class="bg-white/20 p-2 px-4 rounded-xl text-xs font-bold backdrop-blur-sm shadow-sm">+ / -</button>
+                        <button onclick="addMoney()" class="bg-white/20 p-2 px-4 rounded-xl text-xs font-bold shadow-sm">+ / -</button>
                     </div>
                     <div class="border-t border-white/20 pt-3">
-                        <p class="text-[9px] font-bold uppercase opacity-60 mb-2">Historique</p>
                         <div id="savings-history" class="space-y-2 max-h-24 overflow-y-auto text-[11px]"></div>
                     </div>
                 </div>
 
                 <div class="card">
                     <div class="flex justify-between items-center mb-4">
-                        <button onclick="changeMonth(-1)" class="p-1"><i data-lucide="chevron-left" class="w-4 h-4 text-gray-300"></i></button>
-                        <h3 id="calendar-title" class="font-black text-xs uppercase tracking-widest text-[#A68A64]">Février 2026</h3>
-                        <button onclick="changeMonth(1)" class="p-1"><i data-lucide="chevron-right" class="w-4 h-4 text-gray-300"></i></button>
+                        <button onclick="changeMonth(-1)"><i data-lucide="chevron-left" class="w-4 h-4 text-gray-300"></i></button>
+                        <h3 id="calendar-title" class="font-black text-xs uppercase text-[#A68A64]">Mois</h3>
+                        <button onclick="changeMonth(1)"><i data-lucide="chevron-right" class="w-4 h-4 text-gray-300"></i></button>
                     </div>
-                    <div class="grid grid-cols-7 gap-1 text-[10px] font-bold text-center text-gray-300 mb-2">
-                        <span>LUN</span><span>MAR</span><span>MER</span><span>JEU</span><span>VEN</span><span>SAM</span><span>DIM</span>
+                    <div class="grid grid-cols-7 gap-1 text-[10px] font-bold text-center text-gray-300 mb-2 uppercase">
+                        <span>Lun</span><span>Mar</span><span>Mer</span><span>Jeu</span><span>Ven</span><span>Sam</span><span>Dim</span>
                     </div>
                     <div id="calendar-grid" class="grid grid-cols-7 gap-1"></div>
                     
                     <div id="day-details" class="hidden mt-4 pt-4 border-t border-gray-50">
                         <div class="flex justify-between items-center mb-2">
-                            <span id="selected-date-label" class="text-[10px] font-black uppercase text-[#A68A64]">Date</span>
-                            <button onclick="addCalendarEvent()" class="text-[10px] font-bold text-gray-400 underline">Ajouter projet</button>
+                            <span id="selected-date-label" class="text-[10px] font-black text-[#A68A64]">Date</span>
+                            <button onclick="addCalendarEvent()" class="text-[10px] font-bold text-gray-400">+ Ajouter projet</button>
                         </div>
                         <div id="day-events-list" class="space-y-2 text-xs"></div>
                     </div>
@@ -109,20 +110,19 @@
                     <button onclick="openVSModal()" class="bg-indigo-50 text-indigo-500 p-2 px-3 rounded-full font-black text-[10px]">VS</button>
                     <button onclick="askPoll()" class="bg-gray-50 text-gray-400 p-2 rounded-full"><i data-lucide="bar-chart-2" class="w-4 h-4"></i></button>
                     <input type="text" id="chat-input" placeholder="Message..." class="input-style mb-0 rounded-full px-5 border-none bg-gray-50 flex-1">
-                    <button onclick="sendChat()" class="bg-[#A68A64] text-white w-10 h-10 rounded-full flex items-center justify-center shadow-md active:scale-90"><i data-lucide="send" class="w-4 h-4"></i></button>
+                    <button onclick="sendChat()" class="bg-[#A68A64] text-white w-10 h-10 rounded-full flex items-center justify-center"><i data-lucide="send" class="w-4 h-4"></i></button>
                 </div>
             </section>
 
             <section id="tab-wishlist" class="hidden h-full overflow-y-auto p-4 pb-24 no-scrollbar">
                 <div class="card bg-orange-50/50">
-                    <h3 class="text-[10px] font-black uppercase text-[#A68A64] mb-3">🎁 Ajouter un souhait</h3>
                     <input type="text" id="wish-name" placeholder="Nom de l'objet..." class="input-style text-xs">
                     <input type="text" id="wish-link" placeholder="Lien boutique..." class="input-style text-xs">
                     <div class="flex gap-2">
                         <label class="flex-1 bg-white text-gray-400 text-[10px] font-bold py-3 rounded-xl text-center border border-dashed border-[#E6DCD3] cursor-pointer">
-                            📸 PHOTO GALERIE <input type="file" id="wish-upload" class="hidden" accept="image/*" onchange="handleWishUpload(this)">
+                            📸 PHOTO <input type="file" id="wish-upload" class="hidden" accept="image/*" onchange="handleWishUpload(this)">
                         </label>
-                        <button onclick="addWish()" class="flex-1 btn-primary py-3 text-xs">POSTER</button>
+                        <button onclick="addWish()" class="flex-1 btn-primary py-3 text-xs">AJOUTER</button>
                     </div>
                 </div>
                 <div id="wishlist-grid" class="grid grid-cols-2 gap-3 mt-4"></div>
@@ -131,14 +131,14 @@
             <section id="tab-deen" class="hidden h-full overflow-y-auto p-4 pb-24 no-scrollbar">
                 <div class="grid grid-cols-2 gap-3 mb-6">
                     <div class="card text-center">
-                        <p class="text-[10px] font-bold text-gray-400 mb-1 uppercase">Versets</p>
+                        <p class="text-[10px] font-bold text-gray-400 mb-1">VERSETS</p>
                         <div class="text-2xl font-black text-[#A68A64]" id="cnt-v">0</div>
-                        <div class="flex justify-center gap-3 mt-2"><button onclick="updCnt('v',-1)" class="w-7 h-7 rounded-full border text-gray-300">-</button><button onclick="updCnt('v',1)" class="w-7 h-7 rounded-full bg-[#A68A64] text-white">+</button></div>
+                        <div class="flex justify-center gap-3 mt-2"><button onclick="updCnt('v',-1)" class="w-7 h-7 rounded-full border">-</button><button onclick="updCnt('v',1)" class="w-7 h-7 rounded-full bg-[#A68A64] text-white">+</button></div>
                     </div>
                     <div class="card text-center">
-                        <p class="text-[10px] font-bold text-gray-400 mb-1 uppercase">Pages</p>
+                        <p class="text-[10px] font-bold text-gray-400 mb-1">PAGES</p>
                         <div class="text-2xl font-black text-[#A68A64]" id="cnt-p">0</div>
-                        <div class="flex justify-center gap-3 mt-2"><button onclick="updCnt('p',-1)" class="w-7 h-7 rounded-full border text-gray-300">-</button><button onclick="updCnt('p',1)" class="w-7 h-7 rounded-full bg-[#A68A64] text-white">+</button></div>
+                        <div class="flex justify-center gap-3 mt-2"><button onclick="updCnt('p',-1)" class="w-7 h-7 rounded-full border">-</button><button onclick="updCnt('p',1)" class="w-7 h-7 rounded-full bg-[#A68A64] text-white">+</button></div>
                     </div>
                 </div>
                 <h3 class="text-xs font-black text-[#A68A64] mb-3 uppercase text-center">Salat du jour 🤲</h3>
@@ -159,24 +159,24 @@
             </section>
         </main>
 
-        <nav class="absolute bottom-0 w-full bg-white/95 backdrop-blur-md border-t border-[#E6DCD3] flex justify-around py-4 pb-6 z-30">
-            <button onclick="switchTab('home')" id="nav-home" class="nav-btn nav-active"><i data-lucide="layout-dashboard" class="w-6 h-6"></i><span class="text-[9px] font-bold">Board</span></button>
-            <button onclick="switchTab('chat')" id="nav-chat" class="nav-btn"><i data-lucide="message-circle" class="w-6 h-6"></i><span class="text-[9px] font-bold">Chat</span></button>
-            <button onclick="switchTab('wishlist')" id="nav-wishlist" class="nav-btn"><i data-lucide="gift" class="w-6 h-6"></i><span class="text-[9px] font-bold">Wish</span></button>
-            <button onclick="switchTab('deen')" id="nav-deen" class="nav-btn"><i data-lucide="kaaba" class="w-6 h-6"></i><span class="text-[9px] font-bold">Deen</span></button>
-            <button onclick="switchTab('budget')" id="nav-budget" class="nav-btn"><i data-lucide="wallet" class="w-6 h-6"></i><span class="text-[9px] font-bold">Budget</span></button>
+        <nav class="absolute bottom-0 w-full bg-white border-t border-[#E6DCD3] flex justify-around py-4 pb-6 z-30">
+            <button onclick="switchTab('home')" id="nav-home" class="nav-btn nav-active"><i data-lucide="layout-dashboard"></i><span class="text-[9px] font-bold">Board</span></button>
+            <button onclick="switchTab('chat')" id="nav-chat" class="nav-btn"><i data-lucide="message-circle"></i><span class="text-[9px] font-bold">Chat</span></button>
+            <button onclick="switchTab('wishlist')" id="nav-wishlist" class="nav-btn"><i data-lucide="gift"></i><span class="text-[9px] font-bold">Wish</span></button>
+            <button onclick="switchTab('deen')" id="nav-deen" class="nav-btn"><i data-lucide="kaaba"></i><span class="text-[9px] font-bold">Deen</span></button>
+            <button onclick="switchTab('budget')" id="nav-budget" class="nav-btn"><i data-lucide="wallet"></i><span class="text-[9px] font-bold">Budget</span></button>
         </nav>
     </div>
 
-    <div id="modal-vs" class="hidden fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-6 backdrop-blur-md">
+    <div id="modal-vs" class="hidden fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-6">
         <div class="bg-white w-full max-w-sm rounded-3xl p-6 relative">
-            <button onclick="closeModal('modal-vs')" class="absolute top-4 right-4 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
-            <h3 class="font-black text-xl text-center text-[#A68A64] mb-6 italic uppercase">Duel Photo 🔥</h3>
+            <button onclick="closeModal('modal-vs')" class="absolute top-4 right-4 text-slate-400"><i data-lucide="x"></i></button>
+            <h3 class="font-black text-center text-[#A68A64] mb-6 uppercase">Duel Photo 🔥</h3>
             <div class="flex gap-3 mb-6">
                 <label class="vs-preview cursor-pointer" id="vs-preview-1"><span>A</span><input type="file" class="hidden" accept="image/*" onchange="previewVS(1, this)"></label>
                 <label class="vs-preview cursor-pointer" id="vs-preview-2"><span>B</span><input type="file" class="hidden" accept="image/*" onchange="previewVS(2, this)"></label>
             </div>
-            <button onclick="sendVS()" class="btn-primary text-xs">ENVOYER LE DUEL</button>
+            <button onclick="sendVS()" class="btn-primary text-xs">ENVOYER</button>
         </div>
     </div>
 
@@ -192,13 +192,166 @@
         };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
-        const auth = firebase.auth();
 
-        let currentUser = null;
+        let currentUser = localStorage.getItem('samcy_user');
         let wishBase64 = null;
         let vsImg1 = null, vsImg2 = null;
         let currentBudgetType = 'wedding';
-        
-        // CALENDAR VARS
         let currentCalDate = new Date();
-        let selectedDate
+        let selectedDateStr = null;
+
+        // --- AUTH SIMPLIFIÉ ---
+        if(currentUser) { 
+            document.getElementById('profile-view').classList.add('hidden');
+            document.getElementById('app-view').classList.remove('hidden');
+            initApp();
+        }
+        function setProfile(name) { 
+            localStorage.setItem('samcy_user', name);
+            location.reload(); 
+        }
+        function logout() { 
+            localStorage.removeItem('samcy_user');
+            location.reload(); 
+        }
+
+        function initApp() {
+            loadMoods(); loadSavings(); loadCounters(); loadChat();
+            loadWishlist(); loadPrayers(); loadBudget(); renderCalendar();
+            lucide.createIcons();
+        }
+
+        window.switchTab = (tab) => {
+            document.querySelectorAll('section[id^="tab-"]').forEach(s => s.classList.add('hidden'));
+            document.getElementById('tab-'+tab).classList.remove('hidden');
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('nav-active'));
+            document.getElementById('nav-'+tab).classList.add('nav-active');
+        };
+        window.closeModal = (id) => document.getElementById(id).classList.add('hidden');
+
+        // --- MOODS ---
+        window.saveMood = (emoji) => db.collection('moods').doc(currentUser).set({ emoji, time: Date.now() });
+        function loadMoods() {
+            db.collection('moods').onSnapshot(snap => {
+                snap.forEach(d => {
+                    if (document.getElementById('mood-' + d.id)) document.getElementById('mood-' + d.id).innerText = d.data().emoji;
+                    if (d.id === currentUser) {
+                        document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('mood-active'));
+                        document.getElementById('m-' + d.data().emoji)?.classList.add('mood-active');
+                    }
+                });
+            });
+        }
+
+        // --- ECONOMIES ---
+        window.addMoney = () => {
+            const v = prompt("Montant (+/-) :");
+            const m = prompt("Motif (ex: Salaire, Acompte...) :");
+            if (v && m) {
+                db.collection('stats').doc('savings').get().then(docRef => {
+                    const current = docRef.exists ? docRef.data().total : 0;
+                    db.collection('stats').doc('savings').set({ total: current + parseFloat(v) });
+                    db.collection('savings_log').add({ amount: parseFloat(v), reason: m, user: currentUser, date: Date.now() });
+                });
+            }
+        };
+        function loadSavings() {
+            db.collection('stats').doc('savings').onSnapshot(d => { if (d.exists) document.getElementById('total-savings').innerText = d.data().total + " €"; });
+            db.collection('savings_log').orderBy('date', 'desc').limit(10).onSnapshot(snap => {
+                document.getElementById('savings-history').innerHTML = snap.docs.map(docSnap => {
+                    const da = docSnap.data(); const color = da.amount >= 0 ? 'text-green-300' : 'text-red-300';
+                    return `<div class="flex justify-between border-b border-white/5 pb-1"><span>${da.reason} (${da.user})</span><span class="font-bold ${color}">${da.amount>0?'+':''}${da.amount}€</span></div>`;
+                }).join('');
+            });
+        }
+
+        // --- CALENDRIER ---
+        window.changeMonth = (dir) => { currentCalDate.setMonth(currentCalDate.getMonth() + dir); renderCalendar(); };
+        function renderCalendar() {
+            const grid = document.getElementById('calendar-grid');
+            const title = document.getElementById('calendar-title');
+            grid.innerHTML = "";
+            const year = currentCalDate.getFullYear(), month = currentCalDate.getMonth();
+            title.innerText = new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' }).format(currentCalDate);
+            const firstDay = (new Date(year, month, 1).getDay() + 6) % 7;
+            const totalDays = new Date(year, month + 1, 0).getDate();
+            const today = new Date();
+            for (let i = 0; i < firstDay; i++) { grid.innerHTML += `<div></div>`; }
+            db.collection('calendar_events').onSnapshot(snap => {
+                const eventDates = snap.docs.map(doc => doc.data().date);
+                for (let d = 1; d <= totalDays; d++) {
+                    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                    const isToday = today.getFullYear() === year && today.getMonth() === month && today.getDate() === d;
+                    grid.innerHTML += `<div onclick="selectDay('${dateStr}')" class="calendar-day cursor-pointer ${isToday ? 'today' : ''} ${selectedDateStr === dateStr ? 'selected-day' : ''} ${eventDates.includes(dateStr) ? 'has-event' : ''}">${d}</div>`;
+                }
+            });
+        }
+        window.selectDay = (date) => { selectedDateStr = date; document.getElementById('day-details').classList.remove('hidden'); document.getElementById('selected-date-label').innerText = date; renderCalendar(); loadDayEvents(date); };
+        window.addCalendarEvent = () => { const t = prompt("Projet ?"); if (t) db.collection('calendar_events').add({ date: selectedDateStr, title: t, user: currentUser, createdAt: Date.now() }); };
+        function loadDayEvents(date) { db.collection('calendar_events').where('date', '==', date).onSnapshot(snap => { document.getElementById('day-events-list').innerHTML = snap.docs.map(docSnap => `<div class="flex justify-between bg-gray-50 p-2 rounded-lg"><span>${docSnap.data().title}</span><button onclick="delDoc('calendar_events','${docSnap.id}')" class="text-red-300">×</button></div>`).join('') || '<p class="text-gray-300 italic text-center">Rien...</p>'; }); }
+
+        // --- COMPRESSION IMAGES (Comme Girls Mood) ---
+        function compress(file, callback) {
+            const r = new FileReader(); r.onload = (e) => {
+                const i = new Image(); i.onload = () => {
+                    const c = document.createElement('canvas'); const ctx = c.getContext('2d');
+                    let w = i.width, h = i.height, m = 500;
+                    if (w > h) { if (w > m) { h *= m/w; w = m; } } else { if (h > m) { w *= m/h; h = m; } }
+                    c.width = w; c.height = h; ctx.drawImage(i, 0, 0, w, h);
+                    callback(c.toDataURL("image/jpeg", 0.5));
+                }; i.src = e.target.result;
+            }; r.readAsDataURL(file);
+        }
+
+        // --- CHAT & VS ---
+        window.sendChat = () => { const t = document.getElementById('chat-input').value; if (t) { db.collection('chat').add({ text: t, user: currentUser, date: Date.now() }); document.getElementById('chat-input').value = ""; } };
+        window.askPoll = () => { const q = prompt("Sondage ?"); if (q) db.collection('chat').add({ type: 'poll', question: q, votes: { yes: [], no: [] }, user: currentUser, date: Date.now() }); };
+        window.previewVS = (num, input) => compress(input.files[0], b64 => { document.getElementById(`vs-preview-${num}`).style.backgroundImage = `url(${b64})`; if (num === 1) vsImg1 = b64; else vsImg2 = b64; });
+        window.sendVS = () => { if (!vsImg1 || !vsImg2) return alert("2 photos !"); db.collection('chat').add({ type: 'vs', img1: vsImg1, img2: vsImg2, votes: { v1: [], v2: [] }, user: currentUser, date: Date.now() }); closeModal('modal-vs'); vsImg1 = null; vsImg2 = null; };
+        function loadChat() {
+            db.collection('chat').orderBy('date', 'asc').onSnapshot(snap => {
+                const b = document.getElementById('chat-box');
+                b.innerHTML = snap.docs.map(docSnap => {
+                    const da = docSnap.data(); const me = da.user === currentUser;
+                    if (da.type === 'poll') { const y=(da.votes.yes||[]).length, n=(da.votes.no||[]).length, p=y+n===0?50:(y/(y+n))*100; return `<div class="card p-4 border-l-4 border-indigo-400"><p class="font-bold mb-3">${da.question}</p><div class="flex h-8 rounded-lg overflow-hidden text-[10px] font-black"><div onclick="voteC('${docSnap.id}','yes')" class="bg-green-400 flex items-center justify-center text-white" style="width:${p}%">OUI (${y})</div><div onclick="voteC('${docSnap.id}','no')" class="bg-red-400 flex items-center justify-center text-white flex-1">NON (${n})</div></div></div>`; }
+                    if (da.type === 'vs') { const v1=(da.votes.v1||[]).length, v2=(da.votes.v2||[]).length; return `<div class="card p-2"><div class="flex gap-2"><div onclick="voteVS('${docSnap.id}','v1')" class="flex-1 relative"><img src="${da.img1}" class="vs-img-chat"><div class="absolute bottom-1 right-1 bg-black/50 text-white text-[9px] px-2 rounded-full">${v1}</div></div><div onclick="voteVS('${docSnap.id}','v2')" class="flex-1 relative"><img src="${da.img2}" class="vs-img-chat"><div class="absolute bottom-1 right-1 bg-black/50 text-white text-[9px] px-2 rounded-full">${v2}</div></div></div></div>`; }
+                    return `<div class="flex flex-col ${me ? 'items-end' : 'items-start'} mb-1"><span class="text-[9px] font-bold text-gray-300 px-1 uppercase">${da.user}</span><div class="${me ? 'bg-[#A68A64] text-white' : 'bg-white border'} px-4 py-2 rounded-2xl text-[13px] max-w-[85%] shadow-sm">${da.text}</div></div>`;
+                }).join(''); b.scrollTop = b.scrollHeight;
+            });
+        }
+        window.voteC = (id, c) => { const r=db.collection('chat').doc(id); if(c==='yes') r.update({"votes.yes":firebase.firestore.FieldValue.arrayUnion(currentUser),"votes.no":firebase.firestore.FieldValue.arrayRemove(currentUser)}); else r.update({"votes.no":firebase.firestore.FieldValue.arrayUnion(currentUser),"votes.yes":firebase.firestore.FieldValue.arrayRemove(currentUser)}); };
+        window.voteVS = (id, c) => { const r=db.collection('chat').doc(id); if(c==='v1') r.update({"votes.v1":firebase.firestore.FieldValue.arrayUnion(currentUser),"votes.v2":firebase.firestore.FieldValue.arrayRemove(currentUser)}); else r.update({"votes.v2":firebase.firestore.FieldValue.arrayUnion(currentUser),"votes.v1":firebase.firestore.FieldValue.arrayRemove(currentUser)}); };
+
+        // --- WISHLIST ---
+        window.handleWishUpload = (i) => compress(i.files[0], b64 => { wishBase64 = b64; alert("Prêt !"); });
+        window.addWish = () => {
+            const n = document.getElementById('wish-name').value;
+            if (!n) return;
+            db.collection('wishlist').add({ name: n, link: document.getElementById('wish-link').value, image: wishBase64, user: currentUser, createdAt: Date.now() });
+            document.getElementById('wish-name').value = ""; document.getElementById('wish-link').value = ""; wishBase64 = null;
+        };
+        function loadWishlist() { db.collection('wishlist').orderBy('createdAt', 'desc').onSnapshot(snap => { document.getElementById('wishlist-grid').innerHTML = snap.docs.map(docSnap => { const da = docSnap.data(); return `<div class="card p-2 text-center relative overflow-visible"><button onclick="delDoc('wishlist','${docSnap.id}')" class="btn-delete">×</button>${da.image ? `<img src="${da.image}" class="w-full h-24 object-cover rounded-lg mb-2">` : ''}<div class="font-bold text-[11px] truncate uppercase">${da.name}</div>${da.link ? `<a href="${da.link}" target="_blank" class="text-[9px] text-[#A68A64] block mt-1 underline">Acheter</a>` : ''}</div>`; }).join(''); }); }
+
+        // --- DEEN ---
+        window.updCnt = (k, v) => { const ref = db.collection('deen').doc(currentUser); ref.get().then(s => { const cur = s.exists ? s.data()[k] || 0 : 0; ref.set({ [k]: Math.max(0, cur + v) }, { merge: true }); }); };
+        function loadCounters() { db.collection('deen').doc(currentUser).onSnapshot(d => { if (d.exists()) { document.getElementById('cnt-v').innerText = d.data().v || 0; document.getElementById('cnt-p').innerText = d.data().p || 0; }}); }
+        function loadPrayers() {
+            const today = new Date().toISOString().split('T')[0];
+            db.collection('prayers').doc(`${today}_${currentUser}`).onSnapshot(d => {
+                const data = d.exists() ? d.data() : {};
+                document.getElementById('prayers-list').innerHTML = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'].map(p => `<div class="card flex justify-between items-center py-4"><span class="font-bold">${p}</span><input type="checkbox" ${data[p] ? 'checked' : ''} onchange="toggleP('${p}', ${data[p] || false})" class="w-6 h-6 accent-[#A68A64]"></div>`).join('');
+            });
+        }
+        window.toggleP = (p, cur) => db.collection('prayers').doc(`${new Date().toISOString().split('T')[0]}_${currentUser}`).set({ [p]: !cur }, { merge: true });
+
+        // --- BUDGET ---
+        window.switchBudget = (type) => { currentBudgetType = type; document.getElementById('b-wed').className = type === 'wedding' ? "flex-1 p-3 rounded-xl font-black text-[10px] uppercase bg-[#A68A64] text-white" : "flex-1 p-3 rounded-xl font-black text-[10px] uppercase bg-white text-gray-400"; document.getElementById('b-house').className = type === 'housing' ? "flex-1 p-3 rounded-xl font-black text-[10px] uppercase bg-[#A68A64] text-white" : "flex-1 p-3 rounded-xl font-black text-[10px] uppercase bg-white text-gray-400"; loadBudget(); };
+        window.addBudget = () => { const n = document.getElementById('bud-name').value; if (n) db.collection('budget_' + currentBudgetType).add({ name: n, planned: document.getElementById('bud-plan').value, paid: document.getElementById('bud-paid').value, createdAt: Date.now() }); };
+        function loadBudget() { db.collection('budget_' + currentBudgetType).orderBy('createdAt', 'desc').onSnapshot(snap => { document.getElementById('budget-list').innerHTML = snap.docs.map(docSnap => { const da = docSnap.data(); return `<div class="card flex justify-between items-center text-xs py-3"><div class="font-bold uppercase">${da.name}</div><div class="flex gap-4"><div>P: ${da.planned}€</div><div class="font-black text-[#A68A64]">R: ${da.paid}€</div><button onclick="delDoc('budget_${currentBudgetType}', '${docSnap.id}')" class="text-red-300">×</button></div></div>`; }).join(''); }); }
+
+        window.delDoc = (col, id) => { if (confirm("Supprimer?")) db.collection(col).doc(id).delete(); };
+        window.openVSModal = () => document.getElementById('modal-vs').classList.remove('hidden');
+
+    </script>
+</body>
+</html>
