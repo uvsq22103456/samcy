@@ -19,7 +19,7 @@
         .page { display: none; padding: 24px; animation: slideUp 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
         .page.active { display: block; }
         
-        /* DESIGN "GIRL MOOD" */
+        /* DESIGN "GIRL MOOD" / IOS - INCHANGÉ */
         .card { 
             background: rgba(255, 255, 255, 0.9); 
             backdrop-filter: blur(10px);
@@ -30,23 +30,22 @@
             border: 1px solid rgba(255,255,255,0.8);
         }
         
-        /* NAVIGATION */
+        /* NAVIGATION GLASS */
         .nav-bar { 
-            position: fixed; bottom: 25px; left: 15px; right: 15px; 
-            background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); 
+            position: fixed; bottom: 25px; left: 20px; right: 20px; 
+            background: rgba(255,255,255,0.9); backdrop-filter: blur(20px); 
             height: 75px; border-radius: 30px; 
             display: flex; justify-content: space-between; align-items: center; 
             padding: 0 10px; 
             box-shadow: 0 20px 50px rgba(0,0,0,0.1); 
             z-index: 999; 
             border: 1px solid rgba(255,255,255,0.5);
-            overflow-x: auto;
         }
         .nav-btn { color: #CDC5C0; font-size: 20px; transition: 0.3s; min-width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
         .nav-btn.active { color: white; background: var(--nude); transform: translateY(-5px); box-shadow: 0 5px 15px rgba(196, 164, 132, 0.4); }
 
         /* MOODS */
-        .mood-btn { font-size: 32px; opacity: 0.4; transition: 0.3s; filter: grayscale(1); transform: scale(0.9); }
+        .mood-btn { font-size: 32px; opacity: 0.4; transition: 0.3s; filter: grayscale(1); transform: scale(0.9); background:none; border:none; }
         .mood-btn.active-mood { opacity: 1; filter: grayscale(0); transform: scale(1.15); }
 
         /* CALENDRIER GRID */
@@ -113,7 +112,7 @@
 
         <div class="card">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="font-bold text-[#4A443F]">Février 2026</h3> 
+                <h3 class="font-bold text-[#4A443F]">Calendrier</h3> 
                 <span class="text-xs bg-[#F5F2F0] px-2 py-1 rounded-lg text-gray-400" id="current-date-display">...</span>
             </div>
             <div class="grid grid-cols-7 text-center text-[10px] font-bold text-gray-300 mb-2">
@@ -161,18 +160,18 @@
         <div id="chat-list" class="h-[60vh] overflow-y-auto pb-4 px-1 space-y-3"></div>
         
         <div class="fixed bottom-[110px] left-5 right-5 z-50">
-            <div id="poll-modal" class="hidden bg-white/90 backdrop-blur-xl p-4 rounded-3xl shadow-2xl border mb-3 animate-bounce">
+            <div id="poll-modal" class="hidden bg-white/95 backdrop-blur-xl p-4 rounded-3xl shadow-2xl border mb-3 animate-bounce">
                 <p class="text-xs font-bold mb-3 uppercase text-gray-400 text-center">Nouveau Sondage</p>
                 <input type="text" id="poll-q" placeholder="Ta question ?" class="input-luxe mb-2">
                 <div class="flex gap-2 mb-2">
                     <label class="bg-gray-100 flex-1 h-20 rounded-xl flex items-center justify-center cursor-pointer border-2 border-dashed border-gray-300 text-gray-400 text-[10px] relative overflow-hidden">
                         <span class="z-10">📸 Photo 1</span>
-                        <input type="file" class="hidden" accept="image/*" onchange="readImg(this, 'prev1')">
+                        <input type="file" class="hidden" accept="image/*" onchange="storeImg(this, 'poll1', 'prev1')">
                         <div id="prev1" class="absolute inset-0 bg-cover bg-center hidden"></div>
                     </label>
                     <label class="bg-gray-100 flex-1 h-20 rounded-xl flex items-center justify-center cursor-pointer border-2 border-dashed border-gray-300 text-gray-400 text-[10px] relative overflow-hidden">
                         <span class="z-10">📸 Photo 2</span>
-                        <input type="file" class="hidden" accept="image/*" onchange="readImg(this, 'prev2')">
+                        <input type="file" class="hidden" accept="image/*" onchange="storeImg(this, 'poll2', 'prev2')">
                         <div id="prev2" class="absolute inset-0 bg-cover bg-center hidden"></div>
                     </label>
                 </div>
@@ -191,10 +190,11 @@
         <h2 class="text-xl font-bold mb-6 ml-2">Finances 💸</h2>
         
         <div class="card bg-[#4A443F] text-white">
-            <div class="flex justify-between items-center">
+            <div class="flex justify-between items-center mb-2">
                 <div><p class="text-[10px] uppercase opacity-60">Économies Actuelles</p><h2 class="text-3xl font-bold mt-1" id="total-savings">0 €</h2></div>
                 <button onclick="editSavings()" class="bg-white/10 backdrop-blur-md px-4 py-2 rounded-xl text-xs font-bold hover:bg-white/20 transition">+ / -</button>
             </div>
+            <div id="savings-hist" class="text-[9px] opacity-70 border-t border-white/10 pt-2 space-y-1 max-h-20 overflow-y-auto"></div>
         </div>
 
         <details class="card" open>
@@ -202,7 +202,6 @@
                 <span>💍 Mariage</span> <span id="tot-wed" class="text-[10px] bg-orange-50 text-orange-600 font-bold px-2 py-1 rounded-lg">0€</span>
             </summary>
             <div class="mt-4">
-                <div class="grid grid-cols-3 text-[9px] font-bold text-gray-400 mb-2 uppercase"><span>Quoi</span><span>Prévu</span><span>Payé</span></div>
                 <div id="list-wed" class="space-y-3"></div>
                 <button onclick="addBudget('wed')" class="w-full py-3 border border-dashed rounded-xl text-[10px] text-gray-400 mt-4 hover:bg-gray-50">+ Nouvelle dépense</button>
             </div>
@@ -212,7 +211,6 @@
                 <span>🏠 Appartement</span> <span id="tot-apt" class="text-[10px] bg-blue-50 text-blue-600 font-bold px-2 py-1 rounded-lg">0€</span>
             </summary>
             <div class="mt-4">
-                <div class="grid grid-cols-3 text-[9px] font-bold text-gray-400 mb-2 uppercase"><span>Quoi</span><span>Prévu</span><span>Payé</span></div>
                 <div id="list-apt" class="space-y-3"></div>
                 <button onclick="addBudget('apt')" class="w-full py-3 border border-dashed rounded-xl text-[10px] text-gray-400 mt-4 hover:bg-gray-50">+ Nouvelle dépense</button>
             </div>
@@ -230,7 +228,7 @@
             <input type="text" id="w-link" placeholder="Lien URL (optionnel)" class="input-luxe bg-white mb-2">
             <label class="bg-white w-full h-12 flex items-center justify-center text-xs border border-dashed border-[#C4A484] rounded-xl mb-3 cursor-pointer text-[#C4A484] relative overflow-hidden">
                 <i class="fa-solid fa-image mr-2"></i> Photo Galerie
-                <input type="file" id="w-file" class="hidden" accept="image/*" onchange="readImg(this, 'w-prev')">
+                <input type="file" class="hidden" accept="image/*" onchange="storeImg(this, 'wish', 'w-prev')">
                 <div id="w-prev" class="absolute inset-0 bg-cover bg-center hidden opacity-50"></div>
             </label>
             <button onclick="addWish()" class="w-full bg-[#C4A484] text-white py-3 rounded-xl font-bold text-xs shadow-lg shadow-orange-100">Ajouter à la liste</button>
@@ -276,7 +274,7 @@
     </nav>
 
     <script>
-        // --- TA CONFIGURATION FIREBASE (DEJA INTÉGRÉE) ---
+        // CONFIG FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyCBZ96lSFIWzPsHklwk3ZU8kfWudfp8oVQ",
             authDomain: "samcy-1136c.firebaseapp.com",
@@ -288,12 +286,13 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // --- USER & NAV ---
+        // VARS
         let user = localStorage.getItem('s_user');
         if(!user) { user = prompt("Qui es-tu ? (samia / quincy)").toLowerCase().trim(); localStorage.setItem('s_user', user); }
         document.getElementById('user-display').innerText = user;
         function logout() { localStorage.removeItem('s_user'); location.reload(); }
 
+        // NAVIGATION
         window.nav = (p, btn) => {
             document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
             document.getElementById(p).classList.add('active');
@@ -301,14 +300,26 @@
             btn.classList.add('active');
         };
 
-        // --- 1. HOME ---
+        // GLOBAL IMAGE STORE
+        let tempImgs = { wish: '', poll1: '', poll2: '' };
+        window.storeImg = (inp, key, prevId) => {
+            const r = new FileReader();
+            r.onload = e => {
+                tempImgs[key] = e.target.result;
+                const el = document.getElementById(prevId);
+                el.style.backgroundImage = `url(${e.target.result})`;
+                el.classList.remove('hidden');
+            };
+            if(inp.files[0]) r.readAsDataURL(inp.files[0]);
+        };
+
+        // 1. HOME
         window.setMood=(btn,e)=>{
             db.collection('moods').doc(user).set({e});
             btn.parentNode.querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('active-mood')); btn.classList.add('active-mood');
         };
         db.collection('moods').onSnapshot(s=>{ s.forEach(d=>{ if(document.getElementById(`show-mood-${d.id}`))document.getElementById(`show-mood-${d.id}`).innerText=d.data().e; }); });
 
-        // COUNTDOWN
         db.collection('events').onSnapshot(s=>{
             const today=new Date(); today.setHours(0,0,0,0); let arr=[];
             s.forEach(d=>{ const ev=d.data(); const dt=new Date(ev.date); if(dt>=today)arr.push({...ev, obj:dt}); });
@@ -322,71 +333,57 @@
             } else { document.getElementById('countdown-box').classList.add('hidden'); }
         });
 
-        // CALENDAR
         const dt=new Date(); const dim=new Date(dt.getFullYear(),dt.getMonth()+1,0).getDate(); const cg=document.getElementById('calendar-grid');
         document.getElementById('current-date-display').innerText = new Intl.DateTimeFormat('fr-FR', {month:'long', year:'numeric'}).format(dt);
-        
-        // Jours vides début de mois
-        const fd = new Date(dt.getFullYear(), dt.getMonth(), 1).getDay(); // 0 Dim, 1 Lun...
-        const shift = fd === 0 ? 6 : fd - 1; // Ajustement pour Lundi premier
+        const fd = new Date(dt.getFullYear(), dt.getMonth(), 1).getDay();
+        const shift = fd === 0 ? 6 : fd - 1;
         for(let k=0; k<shift; k++) cg.innerHTML+=`<div></div>`;
-
-        // Jours réels
-        for(let i=1;i<=dim;i++){
-            const dStr=`${dt.getFullYear()}-${(dt.getMonth()+1).toString().padStart(2,'0')}-${i.toString().padStart(2,'0')}`;
-            cg.innerHTML+=`<div onclick="selD('${dStr}')" class="cal-day cursor-pointer" id="day-${dStr}">${i}</div>`;
-        }
-
-        // Marquer les events
-        db.collection('events').onSnapshot(s=>{
-            document.querySelectorAll('.has-event').forEach(e=>e.classList.remove('has-event'));
-            s.forEach(doc=>{ const d=doc.data().date; if(document.getElementById(`day-${d}`)) document.getElementById(`day-${d}`).classList.add('has-event'); });
-        });
-
-        window.selD=(d)=>{
-            document.getElementById('event-box').classList.remove('hidden'); document.getElementById('sel-date-text').innerText=d;
-            db.collection('events').where('date','==',d).onSnapshot(s=>{
-                const l=document.getElementById('event-list'); l.innerHTML='';
-                s.forEach(doc=>l.innerHTML+=`<div class="flex justify-between text-sm border-b pb-1"><span>${doc.data().title}</span><span onclick="del('events','${doc.id}')" class="text-red-400 cursor-pointer">x</span></div>`);
-            });
-        };
+        for(let i=1;i<=dim;i++){ const dStr=`${dt.getFullYear()}-${(dt.getMonth()+1).toString().padStart(2,'0')}-${i.toString().padStart(2,'0')}`; cg.innerHTML+=`<div onclick="selD('${dStr}')" class="cal-day cursor-pointer" id="day-${dStr}">${i}</div>`; }
+        db.collection('events').onSnapshot(s=>{ document.querySelectorAll('.has-event').forEach(e=>e.classList.remove('has-event')); s.forEach(doc=>{ const d=doc.data().date; if(document.getElementById(`day-${d}`)) document.getElementById(`day-${d}`).classList.add('has-event'); }); });
+        window.selD=(d)=>{ document.getElementById('event-box').classList.remove('hidden'); document.getElementById('sel-date-text').innerText=d; db.collection('events').where('date','==',d).onSnapshot(s=>{ const l=document.getElementById('event-list');l.innerHTML=''; s.forEach(doc=>l.innerHTML+=`<div class="flex justify-between text-sm border-b pb-1"><span>${doc.data().title}</span><span onclick="del('events','${doc.id}')" class="text-red-400 cursor-pointer">x</span></div>`); }); };
         window.addEvent=()=>{ const t=document.getElementById('new-evt').value; const d=document.getElementById('sel-date-text').innerText; if(t)db.collection('events').add({title:t,date:d}); document.getElementById('new-evt').value=''; };
 
-        // --- 2. PLACES ---
+        // 2. PLACES
         window.addPlace=()=>{ const n=document.getElementById('p-name').value; const c=document.getElementById('p-cat').value; const l=document.getElementById('p-loc').value; if(n){ db.collection('places').add({name:n,cat:c,loc:l}); document.getElementById('p-name').value=''; }};
         let cF='all'; window.filterP=(c)=>{ cF=c; renderP(); };
         let allP=[]; db.collection('places').onSnapshot(s=>{ allP=[]; s.forEach(d=>allP.push({id:d.id,...d.data()})); renderP(); });
-        function renderP(){
-            const l=document.getElementById('places-list'); l.innerHTML='';
-            const f=cF==='all'?allP:allP.filter(p=>p.cat===cF);
-            f.forEach(p=>{
-                const ic=p.cat==='Resto'?'🍝':p.cat==='FastFood'?'🍔':'🎢';
-                l.innerHTML+=`<div class="bg-white p-4 rounded-2xl shadow-sm border flex justify-between items-center"><div class="flex gap-3 items-center"><span class="text-2xl">${ic}</span><div><p class="font-bold text-sm">${p.name}</p><p class="text-[10px] text-gray-400">${p.loc||''}</p></div></div><button onclick="del('places','${p.id}')" class="text-gray-300">x</button></div>`;
-            });
-        }
+        function renderP(){ const l=document.getElementById('places-list'); l.innerHTML=''; const f=cF==='all'?allP:allP.filter(p=>p.cat===cF); f.forEach(p=>{ const ic=p.cat==='Resto'?'🍝':p.cat==='FastFood'?'🍔':'🎢'; l.innerHTML+=`<div class="bg-white p-4 rounded-2xl shadow-sm border flex justify-between items-center"><div class="flex gap-3 items-center"><span class="text-2xl">${ic}</span><div><p class="font-bold text-sm">${p.name}</p><p class="text-[10px] text-gray-400">${p.loc||''}</p></div></div><button onclick="del('places','${p.id}')" class="text-gray-300">x</button></div>`; }); }
 
-        // --- 3. CHAT ---
-        window.readImg=(inp,pid)=>{ const r=new FileReader(); r.onload=e=>{ document.getElementById(pid).style.backgroundImage=`url(${e.target.result})`; document.getElementById(pid).classList.remove('hidden'); inp.dataset.b64=e.target.result; }; if(inp.files[0])r.readAsDataURL(inp.files[0]); };
+        // 3. CHAT
         window.sendMsg=()=>{ const t=document.getElementById('msg-txt').value; if(t){ db.collection('chat').add({type:'txt',txt:t,user,time:Date.now()}); document.getElementById('msg-txt').value=''; }};
-        window.sendPoll=()=>{ const q=document.getElementById('poll-q').value; const i1=document.getElementById('f-p1').dataset.b64; const i2=document.getElementById('f-p2').dataset.b64; if(q){ db.collection('chat').add({type:'poll',q,i1,i2,user,time:Date.now()}); document.getElementById('poll-modal').classList.add('hidden'); }};
+        window.sendPoll=()=>{ const q=document.getElementById('poll-q').value; if(q){ db.collection('chat').add({type:'poll',q,i1:tempImgs.poll1,i2:tempImgs.poll2,user,time:Date.now()}); document.getElementById('poll-modal').classList.add('hidden'); tempImgs.poll1=''; tempImgs.poll2=''; }};
         db.collection('chat').orderBy('time').onSnapshot(s=>{ const l=document.getElementById('chat-list'); l.innerHTML=''; s.forEach(d=>{ const m=d.data(); const mine=m.user===user; 
             if(m.type==='txt') l.innerHTML+=`<div class="flex flex-col ${mine?'items-end':'items-start'}"><div class="${mine?'bg-[#C4A484] text-white rounded-br-none':'bg-white text-gray-600 rounded-bl-none'} px-4 py-2 rounded-2xl text-sm max-w-[80%] shadow-sm mb-1">${m.txt}</div><span class="text-[9px] text-gray-300 mb-2 px-1">${m.user}</span></div>`;
             else l.innerHTML+=`<div class="w-full bg-white p-3 rounded-2xl border mb-3 shadow-sm"><p class="font-bold text-xs mb-2 text-[#C4A484] uppercase">📊 ${m.q}</p><div class="flex gap-2"><div class="flex-1 h-24 bg-cover rounded-xl border" style="background-image:url('${m.i1}')"></div><div class="flex-1 h-24 bg-cover rounded-xl border" style="background-image:url('${m.i2}')"></div></div><p class="text-[9px] text-gray-300 mt-1 text-right">Par ${m.user}</p></div>`;
         }); l.scrollTop=l.scrollHeight; });
 
-        // --- 4. FINANCES ---
-        window.editSavings=()=>{ const v=prompt("+/-"); if(v){ const cur=parseInt(document.getElementById('total-savings').innerText); db.collection('stats').doc('save').set({t:cur+parseInt(v)}); }};
+        // 4. FINANCES (WITH HISTORY)
+        window.editSavings=()=>{ 
+            const v=prompt("Montant (+ ou -):"); 
+            if(v){ 
+                const r=prompt("Motif (ex: Courses, Resto) :");
+                const val=parseInt(v);
+                const cur=parseInt(document.getElementById('total-savings').innerText); 
+                db.collection('stats').doc('save').set({t:cur+val});
+                db.collection('hist').add({v:val, r:r||'?', u:user, d:new Date().toLocaleDateString()});
+            }
+        };
         db.collection('stats').doc('save').onSnapshot(d=>{ if(d.exists)document.getElementById('total-savings').innerText=d.data().t+" €"; });
+        db.collection('hist').orderBy('d').onSnapshot(s=>{ 
+            const l=document.getElementById('savings-hist'); l.innerHTML=''; 
+            s.forEach(doc=>{ const d=doc.data(); const col=d.v>0?'text-green-400':'text-red-400'; l.innerHTML+=`<div class="flex justify-between"><span class="truncate w-2/3">${d.r}</span><span class="${col}">${d.v}€</span></div>`; });
+        });
+
         window.addBudget=(c)=>{ const n=prompt("Quoi?"); const p=prompt("Prévu?"); if(n)db.collection('bud_'+c).add({n,p,v:0}); };
-        function loadBud(c,lid,tid){ db.collection('bud_'+c).onSnapshot(s=>{ const l=document.getElementById(lid); l.innerHTML=''; let tot=0; s.forEach(doc=>{ const d=doc.data(); tot+=parseInt(d.v); l.innerHTML+=`<div class="grid grid-cols-3 text-xs border-b py-2 items-center"><span>${d.n}</span> <span class="text-gray-400">${d.p}€</span><input type="number" value="${d.v}" onchange="updBud('${c}','${doc.id}',this.value)" class="w-16 bg-white border rounded text-center"><button onclick="del('bud_${c}','${doc.id}')" class="text-red-300 text-[9px] text-right col-span-3 mt-1">x</button></div>`; }); document.getElementById(tid).innerText=tot+"€"; }); }
+        function loadBud(c,lid,tid){ db.collection('bud_'+c).onSnapshot(s=>{ const l=document.getElementById(lid); l.innerHTML=''; let tot=0; s.forEach(doc=>{ const d=doc.data(); tot+=parseInt(d.v); l.innerHTML+=`<div class="flex justify-between items-center text-xs bg-gray-50 p-2 rounded-lg"><div class="w-1/3 font-bold truncate">${d.n}</div><div class="text-gray-400 w-1/4">${d.p}€</div><input type="number" value="${d.v}" onchange="updBud('${c}','${doc.id}',this.value)" class="w-16 bg-white border rounded text-center"><span onclick="del('bud_${c}','${doc.id}')" class="text-red-300 cursor-pointer ml-2">x</span></div>`; }); document.getElementById(tid).innerText=tot+"€"; }); }
         window.updBud=(c,id,v)=>db.collection('bud_'+c).doc(id).update({v});
         loadBud('wed','list-wed','tot-wed'); loadBud('apt','list-apt','tot-apt');
 
-        // --- 5. WISHLIST ---
-        window.addWish=()=>{ const n=document.getElementById('w-name').value; const p=document.getElementById('w-price').value; const l=document.getElementById('w-link').value; const i=document.getElementById('w-file').dataset.b64||"https://via.placeholder.com/150"; if(n){ db.collection('wish').add({n,p,l,i,user}); document.getElementById('w-name').value=''; }};
-        db.collection('wish').onSnapshot(s=>{ const g=document.getElementById('wish-grid'); g.innerHTML=''; s.forEach(doc=>{ const d=doc.data(); const tag=d.user==='samia'?'bg-[#C4A484] text-white':'bg-gray-200 text-gray-500'; g.innerHTML+=`<div class="card p-2 text-center relative overflow-hidden"><div class="h-32 bg-cover bg-center rounded-xl mb-2" style="background-image:url('${d.i}')"></div><div class="flex justify-between items-start mb-1"><p class="font-bold text-xs truncate w-2/3 text-left">${d.n}</p><p class="text-xs font-bold text-[#C4A484]">${d.p}€</p></div><div class="flex justify-between items-center"><span class="${tag} text-[9px] px-2 py-1 rounded-md font-bold uppercase">${d.user}</span>${d.l?`<a href="${d.l}" target="_blank" class="text-[10px] underline text-gray-400">Lien</a>`:''}</div><button onclick="del('wish','${doc.id}')" class="absolute top-2 right-2 bg-white rounded-full w-6 h-6 text-red-400 shadow flex items-center justify-center">×</button></div>`; }); });
+        // 5. WISHLIST
+        window.addWish=()=>{ const n=document.getElementById('w-name').value; const p=document.getElementById('w-price').value; const l=document.getElementById('w-link').value; const i=tempImgs.wish||"https://via.placeholder.com/150"; if(n){ db.collection('wish').add({n,p,l,i,user}); document.getElementById('w-name').value=''; tempImgs.wish=''; document.getElementById('w-prev').classList.add('hidden'); }};
+        db.collection('wish').onSnapshot(s=>{ const g=document.getElementById('wish-grid'); g.innerHTML=''; s.forEach(doc=>{ const d=doc.data(); const tag=d.user==='samia'?'bg-[#C4A484] text-white':'bg-gray-200 text-gray-500'; g.innerHTML+=`<div class="card p-2 text-center relative overflow-hidden"><div class="h-32 bg-cover bg-center rounded-xl mb-2" style="background-image:url('${d.i}')"></div><div class="flex justify-between items-start mb-1"><p class="font-bold text-xs truncate w-2/3 text-left">${d.n}</p><p class="text-xs font-bold text-[#C4A484]">${d.p?d.p+'€':''}</p></div><div class="flex justify-between items-center"><span class="${tag} text-[9px] px-2 py-1 rounded-md font-bold uppercase">${d.user}</span>${d.l?`<a href="${d.l}" target="_blank" class="text-[10px] underline text-gray-400">Lien</a>`:''}</div><button onclick="del('wish','${doc.id}')" class="absolute top-2 right-2 bg-white rounded-full w-6 h-6 text-red-400 shadow flex items-center justify-center">×</button></div>`; }); });
 
-        // --- 6. DEEN ---
+        // 6. DEEN
         const prs=['Fajr','Dhuhr','Asr','Maghrib','Isha']; const tStr=new Date().toISOString().split('T')[0];
         prs.forEach(p=>{ document.getElementById('prayers-box').innerHTML+=`<div class="flex justify-between py-2 border-b border-gray-100 last:border-0"><span class="text-sm text-gray-600">${p}</span><input type="checkbox" id="chk-${p}" onchange="checkP('${p}')" class="accent-[#C4A484] w-5 h-5"></div>`; });
         window.checkP=(p)=>db.collection('pray').doc(`${tStr}_${user}`).set({[p]:document.getElementById(`chk-${p}`).checked},{merge:true});
