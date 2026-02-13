@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>S & Q - App Vie</title>
+    <title>S & Q - App Finale</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
@@ -14,25 +14,25 @@
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap');
         
         :root { --nude: #C4A484; --bg: #F9F7F5; }
-        body { background: var(--bg); font-family: 'Plus Jakarta Sans', sans-serif; color: #4A443F; padding-bottom: 90px; }
+        body { background: var(--bg); font-family: 'Plus Jakarta Sans', sans-serif; color: #4A443F; padding-bottom: 100px; -webkit-tap-highlight-color: transparent; }
         
         .page { display: none; padding: 20px; animation: fadeIn 0.3s; }
         .page.active { display: block; }
         
-        .card { background: white; border-radius: 20px; padding: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); margin-bottom: 15px; }
+        .card { background: white; border-radius: 20px; padding: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.6); }
         
         /* Navigation */
-        .nav-bar { position: fixed; bottom: 20px; left: 20px; right: 20px; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); height: 65px; border-radius: 35px; display: flex; justify-content: space-around; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 999; }
-        .nav-btn { color: #D1C7BD; font-size: 20px; }
-        .nav-btn.active { color: var(--nude); transform: scale(1.1); }
+        .nav-bar { position: fixed; bottom: 20px; left: 20px; right: 20px; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); height: 65px; border-radius: 35px; display: flex; justify-content: space-around; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 999; border: 1px solid white; }
+        .nav-btn { color: #D1C7BD; font-size: 20px; transition: 0.2s; }
+        .nav-btn.active { color: var(--nude); transform: scale(1.2); }
 
         /* Mood */
-        .mood-btn { opacity: 0.3; font-size: 28px; transition: 0.2s; filter: grayscale(1); }
-        .mood-btn.active { opacity: 1; transform: scale(1.2); filter: grayscale(0); }
+        .mood-btn { opacity: 0.3; font-size: 26px; transition: 0.2s; filter: grayscale(1); }
+        .mood-btn.active { opacity: 1; transform: scale(1.3); filter: grayscale(0); }
 
         /* Inputs */
-        .input-std { width: 100%; background: #F3F4F6; border-radius: 10px; padding: 10px; margin-bottom: 8px; font-size: 13px; outline: none; }
-        .btn-main { background: var(--nude); color: white; width: 100%; padding: 10px; border-radius: 10px; font-weight: bold; font-size: 13px; }
+        .input-std { width: 100%; background: #F3F4F6; border-radius: 12px; padding: 12px; margin-bottom: 8px; font-size: 13px; outline: none; border: none; }
+        .btn-main { background: var(--nude); color: white; width: 100%; padding: 12px; border-radius: 12px; font-weight: bold; font-size: 13px; box-shadow: 0 4px 10px rgba(196, 164, 132, 0.3); }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -40,13 +40,16 @@
 <body>
 
     <div class="px-6 pt-8 pb-2 flex justify-between items-end">
-        <h1 class="text-xl font-bold tracking-tight">S & Q ❤️</h1>
-        <button onclick="logout()" class="text-[10px] text-gray-400 underline">Déconnexion</button>
+        <div>
+            <h1 class="text-xl font-bold tracking-tight text-[#4A443F]">S & Q ❤️</h1>
+            <p class="text-[10px] text-gray-400">Connecté : <span id="user-display">...</span></p>
+        </div>
+        <button onclick="logout()" class="text-[10px] text-gray-400 underline bg-white px-2 py-1 rounded">Changer</button>
     </div>
 
     <div id="home" class="page active">
         <div class="card text-center">
-            <p class="text-[10px] uppercase font-bold text-gray-400 mb-3">Ton humeur actuelle</p>
+            <p class="text-[10px] uppercase font-bold text-gray-400 mb-3 tracking-widest">Humeur du jour</p>
             <div class="flex justify-between px-2 mb-4">
                 <button onclick="saveMood('😍')" class="mood-btn" id="m-😍">😍</button>
                 <button onclick="saveMood('😊')" class="mood-btn" id="m-😊">😊</button>
@@ -54,117 +57,141 @@
                 <button onclick="saveMood('😴')" class="mood-btn" id="m-😴">😴</button>
                 <button onclick="saveMood('😤')" class="mood-btn" id="m-😤">😤</button>
             </div>
-            <div class="flex justify-around border-t pt-2">
-                <div><span class="text-[9px] font-bold block">SAMIA</span><span id="show-mood-samia" class="text-xl">...</span></div>
-                <div><span class="text-[9px] font-bold block">QUINCY</span><span id="show-mood-quincy" class="text-xl">...</span></div>
+            <div class="flex justify-around border-t pt-3 bg-gray-50 rounded-b-xl -mx-4 -mb-4 pb-3">
+                <div><span class="text-[9px] font-bold block text-gray-400">SAMIA</span><span id="show-mood-samia" class="text-2xl">...</span></div>
+                <div><span class="text-[9px] font-bold block text-gray-400">QUINCY</span><span id="show-mood-quincy" class="text-2xl">...</span></div>
             </div>
         </div>
 
         <div class="card bg-[#C4A484] text-white">
-            <p class="text-[10px] uppercase opacity-80">Nos Économies</p>
             <div class="flex justify-between items-center">
-                <h2 class="text-3xl font-bold" id="total-savings">0 €</h2>
-                <button onclick="editSavings()" class="bg-white/20 px-3 py-1 rounded text-xs font-bold">+ / -</button>
+                <div>
+                    <p class="text-[10px] uppercase opacity-70">Économies Totales</p>
+                    <h2 class="text-3xl font-bold mt-1" id="total-savings">0 €</h2>
+                </div>
+                <button onclick="editSavings()" class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-xl text-xs font-bold backdrop-blur-md shadow-sm">+ / -</button>
             </div>
         </div>
 
         <div class="card">
-            <h3 class="font-bold text-sm mb-2">Calendrier Projets</h3>
+            <h3 class="font-bold text-sm mb-3 flex items-center gap-2"><i class="fa-regular fa-calendar"></i> Calendrier</h3>
             <div id="calendar-grid" class="grid grid-cols-7 gap-1 text-center mb-2"></div>
-            <div id="event-box" class="hidden bg-gray-50 p-2 rounded-lg text-xs">
-                <p class="font-bold text-[#C4A484]" id="sel-date">...</p>
-                <div id="event-list" class="mb-2"></div>
-                <button onclick="addEvent()" class="underline text-[10px]">+ Ajouter un RDV</button>
+            
+            <div id="event-box" class="hidden bg-orange-50 p-3 rounded-xl text-xs mt-2 border border-orange-100">
+                <p class="font-bold text-[#C4A484] mb-2" id="sel-date">...</p>
+                <div id="event-list" class="space-y-1 mb-3"></div>
+                <div class="flex gap-2">
+                    <input type="text" id="new-event-input" placeholder="Ajouter RDV..." class="flex-1 bg-white p-2 rounded-lg outline-none">
+                    <button onclick="addEvent()" class="bg-[#C4A484] text-white px-3 rounded-lg">+</button>
+                </div>
             </div>
         </div>
     </div>
 
     <div id="chat" class="page">
-        <h2 class="text-lg font-bold mb-4">Discussion</h2>
-        <div id="chat-list" class="h-[65vh] overflow-y-auto pb-4 space-y-2"></div>
+        <h2 class="text-lg font-bold mb-4 text-center">Discussion 💬</h2>
+        <div id="chat-list" class="h-[65vh] overflow-y-auto pb-4 space-y-3 px-1"></div>
         
-        <div class="fixed bottom-[100px] left-5 right-5 z-50">
-            <div id="poll-modal" class="hidden bg-white p-3 rounded-xl shadow-xl border mb-2">
-                <p class="text-xs font-bold mb-2">Sondage Photo</p>
-                <input type="text" id="poll-q" placeholder="Question ?" class="input-std">
+        <div class="fixed bottom-[100px] left-4 right-4 z-50">
+            <div id="poll-modal" class="hidden bg-white p-4 rounded-2xl shadow-2xl border mb-3 animate-bounce">
+                <p class="text-xs font-bold mb-2 uppercase text-gray-400">Créer un sondage</p>
+                <input type="text" id="poll-q" placeholder="Pose ta question..." class="input-std">
                 <div class="flex gap-2 mb-2">
-                    <label class="bg-gray-100 flex-1 p-2 text-[10px] text-center rounded cursor-pointer">
-                        📸 Photo A <input type="file" id="f-p1" class="hidden" onchange="readImg(this, 'prev-p1')">
+                    <label class="bg-gray-100 flex-1 p-3 text-[10px] text-center rounded-xl cursor-pointer border border-dashed border-gray-300">
+                        📸 Photo 1 <input type="file" id="f-p1" class="hidden" accept="image/*" onchange="readImg(this, 'prev-p1')">
                     </label>
-                    <label class="bg-gray-100 flex-1 p-2 text-[10px] text-center rounded cursor-pointer">
-                        📸 Photo B <input type="file" id="f-p2" class="hidden" onchange="readImg(this, 'prev-p2')">
+                    <label class="bg-gray-100 flex-1 p-3 text-[10px] text-center rounded-xl cursor-pointer border border-dashed border-gray-300">
+                        📸 Photo 2 <input type="file" id="f-p2" class="hidden" accept="image/*" onchange="readImg(this, 'prev-p2')">
                     </label>
                 </div>
-                <div class="flex gap-2">
-                    <div id="prev-p1" class="h-8 flex-1 bg-cover rounded"></div>
-                    <div id="prev-p2" class="h-8 flex-1 bg-cover rounded"></div>
+                <div class="flex gap-2 mb-2">
+                    <div id="prev-p1" class="h-10 flex-1 bg-cover rounded-lg hidden"></div>
+                    <div id="prev-p2" class="h-10 flex-1 bg-cover rounded-lg hidden"></div>
                 </div>
-                <button onclick="sendPoll()" class="btn-main mt-2">Envoyer</button>
+                <button onclick="sendPoll()" class="btn-main">Envoyer le sondage</button>
             </div>
 
-            <div class="flex gap-2 items-center bg-white p-2 rounded-full shadow-lg border">
-                <button onclick="document.getElementById('poll-modal').classList.toggle('hidden')" class="w-8 h-8 rounded-full bg-gray-100 text-[#C4A484]"><i class="fa-solid fa-camera"></i></button>
-                <input type="text" id="msg-txt" placeholder="Message..." class="flex-1 outline-none text-sm bg-transparent">
-                <button onclick="sendMsg()" class="w-8 h-8 rounded-full bg-[#C4A484] text-white"><i class="fa-solid fa-paper-plane"></i></button>
+            <div class="flex gap-2 items-center bg-white p-2 rounded-full shadow-xl border border-gray-100">
+                <button onclick="document.getElementById('poll-modal').classList.toggle('hidden')" class="w-10 h-10 rounded-full bg-gray-50 text-[#C4A484] hover:bg-gray-200"><i class="fa-solid fa-camera"></i></button>
+                <input type="text" id="msg-txt" placeholder="Écris un message..." class="flex-1 outline-none text-sm bg-transparent px-2">
+                <button onclick="sendMsg()" class="w-10 h-10 rounded-full bg-[#C4A484] text-white shadow-lg"><i class="fa-solid fa-paper-plane text-xs"></i></button>
             </div>
         </div>
     </div>
 
     <div id="budget" class="page">
-        <h2 class="text-lg font-bold mb-4">Budgets 💸</h2>
+        <h2 class="text-lg font-bold mb-4 text-center">Finances 💸</h2>
         
-        <div class="card">
-            <div class="flex justify-between font-bold text-sm mb-2"><span>💍 Mariage</span> <span id="tot-wed" class="text-[#C4A484]">0€</span></div>
-            <div class="grid grid-cols-3 text-[10px] font-bold text-gray-400 mb-2"><span>QUOI</span><span>PRÉVU</span><span>PAYÉ</span></div>
-            <div id="list-wed" class="space-y-2"></div>
-            <button onclick="addBudget('wed')" class="w-full text-[10px] border border-dashed rounded py-2 mt-2">+ Ajouter dépense</button>
-        </div>
+        <details class="card" open>
+            <summary class="font-bold text-sm cursor-pointer list-none flex justify-between items-center">
+                <span>💍 Mariage</span> <span id="tot-wed" class="text-xs bg-orange-100 text-orange-600 px-2 py-1 rounded-full">0€</span>
+            </summary>
+            <div class="mt-3">
+                <div class="grid grid-cols-3 text-[9px] font-bold text-gray-400 mb-2 uppercase"><span>Quoi</span><span>Prévu</span><span>Payé</span></div>
+                <div id="list-wed" class="space-y-2"></div>
+                <button onclick="addBudget('wed')" class="w-full text-[10px] border border-dashed rounded-xl py-3 mt-3 text-gray-400">+ Ajouter dépense</button>
+            </div>
+        </details>
 
-        <div class="card">
-            <div class="flex justify-between font-bold text-sm mb-2"><span>🏠 Appart</span> <span id="tot-apt" class="text-blue-400">0€</span></div>
-            <div class="grid grid-cols-3 text-[10px] font-bold text-gray-400 mb-2"><span>QUOI</span><span>PRÉVU</span><span>PAYÉ</span></div>
-            <div id="list-apt" class="space-y-2"></div>
-            <button onclick="addBudget('apt')" class="w-full text-[10px] border border-dashed rounded py-2 mt-2">+ Ajouter dépense</button>
-        </div>
+        <details class="card">
+            <summary class="font-bold text-sm cursor-pointer list-none flex justify-between items-center">
+                <span>🏠 Appart</span> <span id="tot-apt" class="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full">0€</span>
+            </summary>
+            <div class="mt-3">
+                <div class="grid grid-cols-3 text-[9px] font-bold text-gray-400 mb-2 uppercase"><span>Quoi</span><span>Prévu</span><span>Payé</span></div>
+                <div id="list-apt" class="space-y-2"></div>
+                <button onclick="addBudget('apt')" class="w-full text-[10px] border border-dashed rounded-xl py-3 mt-3 text-gray-400">+ Ajouter dépense</button>
+            </div>
+        </details>
     </div>
 
     <div id="wish" class="page">
-        <h2 class="text-lg font-bold mb-4">Wishlist 🎁</h2>
+        <h2 class="text-lg font-bold mb-4 text-center">Wishlist 🎁</h2>
         
-        <div class="card bg-orange-50">
-            <input type="text" id="w-name" placeholder="Nom de l'objet" class="input-std">
-            <input type="text" id="w-link" placeholder="Lien (URL)" class="input-std">
-            <label class="bg-white w-full block text-center py-2 text-xs border border-dashed rounded mb-2 cursor-pointer">
-                🖼️ Choisir une photo (Galerie) <input type="file" id="w-file" class="hidden" onchange="readImg(this, 'w-prev')">
+        <div class="card bg-orange-50 border-orange-100">
+            <p class="text-[10px] font-bold uppercase text-[#C4A484] mb-2">Ajouter un souhait</p>
+            <input type="text" id="w-name" placeholder="Nom de l'objet" class="input-std bg-white">
+            <input type="text" id="w-link" placeholder="Lien (URL) - Optionnel" class="input-std bg-white">
+            <label class="bg-white w-full block text-center py-3 text-xs border border-dashed border-[#C4A484] rounded-xl mb-3 cursor-pointer text-[#C4A484]">
+                <i class="fa-solid fa-image mr-1"></i> Choisir une photo (Galerie) 
+                <input type="file" id="w-file" class="hidden" accept="image/*" onchange="readImg(this, 'w-prev')">
             </label>
-            <div id="w-prev" class="h-16 w-16 bg-cover rounded mb-2 mx-auto hidden"></div>
-            <button onclick="addWish()" class="btn-main">Ajouter</button>
+            <div id="w-prev" class="h-20 w-20 bg-cover rounded-lg mb-3 mx-auto hidden border-2 border-white shadow-sm"></div>
+            <button onclick="addWish()" class="btn-main">Ajouter à la liste</button>
         </div>
 
-        <div id="wish-grid" class="grid grid-cols-2 gap-3"></div>
+        <div id="wish-grid" class="grid grid-cols-2 gap-3 pb-20"></div>
     </div>
 
     <div id="deen" class="page">
-        <h2 class="text-lg font-bold mb-4">Spiritualité 🤲</h2>
+        <h2 class="text-lg font-bold mb-4 text-center">Spiritualité 🤲</h2>
         
         <div class="card">
-            <p class="text-xs font-bold mb-2">Prières du jour</p>
-            <div id="prayers-box" class="space-y-2"></div>
+            <p class="text-xs font-bold mb-3 flex items-center gap-2"><i class="fa-solid fa-check-circle text-[#C4A484]"></i> Salat du jour</p>
+            <div id="prayers-box" class="space-y-3"></div>
         </div>
 
         <div class="grid grid-cols-2 gap-3">
-            <div class="card text-center">
-                <p class="text-[10px] font-bold text-gray-400">VERSETS</p>
-                <h3 id="cnt-v" class="text-2xl font-bold my-2">0</h3>
-                <div class="flex justify-center gap-2"><button onclick="updCnt('v',-1)">-</button><button onclick="updCnt('v',1)">+</button></div>
+            <div class="card text-center py-4">
+                <p class="text-[9px] font-bold text-gray-400">VERSETS</p>
+                <h3 id="cnt-v" class="text-3xl font-bold my-2 text-[#C4A484]">0</h3>
+                <div class="flex justify-center gap-2">
+                    <button onclick="updCnt('v',-1)" class="w-8 h-8 rounded-full bg-gray-100">-</button>
+                    <button onclick="updCnt('v',1)" class="w-8 h-8 rounded-full bg-[#C4A484] text-white">+</button>
+                </div>
             </div>
-            <div class="card text-center">
-                <p class="text-[10px] font-bold text-gray-400">PAGES</p>
-                <h3 id="cnt-p" class="text-2xl font-bold my-2">0</h3>
-                <div class="flex justify-center gap-2"><button onclick="updCnt('p',-1)">-</button><button onclick="updCnt('p',1)">+</button></div>
+            <div class="card text-center py-4">
+                <p class="text-[9px] font-bold text-gray-400">PAGES</p>
+                <h3 id="cnt-p" class="text-3xl font-bold my-2 text-[#C4A484]">0</h3>
+                <div class="flex justify-center gap-2">
+                    <button onclick="updCnt('p',-1)" class="w-8 h-8 rounded-full bg-gray-100">-</button>
+                    <button onclick="updCnt('p',1)" class="w-8 h-8 rounded-full bg-[#C4A484] text-white">+</button>
+                </div>
             </div>
         </div>
     </div>
+
+    <div class="text-[9px] text-gray-300 text-center pb-24">VERSION FINALISÉE - REFRESH SI TU NE VOIS PAS ÇA</div>
 
     <nav class="nav-bar">
         <button onclick="nav('home', this)" class="nav-btn active"><i class="fa-solid fa-house"></i></button>
@@ -175,7 +202,8 @@
     </nav>
 
     <script>
-        // --- 1. CONFIGURATION FIREBASE (REMPLACE ICI) ---
+        // --- 1. CONFIGURATION FIREBASE ---
+        // COLLE TES CLÉS ICI ENTRE LES GUILLEMETS !!
         const firebaseConfig = {
             apiKey: "AIzaSyCBZ96lSFIWzPsHklwk3ZU8kfWudfp8oVQ",
             authDomain: "samcy-1136c.firebaseapp.com",
@@ -184,12 +212,21 @@
             messagingSenderId: "337821844780",
             appId: "1:337821844780:web:4a31a07928e36a1f5a5889"
         };
-        firebase.initializeApp(firebaseConfig);
+        
+        try {
+            firebase.initializeApp(firebaseConfig);
+            const db = firebase.firestore();
+            console.log("Firebase connecté !");
+        } catch (e) {
+            alert("Erreur Firebase : Vérifie tes clés ! " + e.message);
+        }
+        
         const db = firebase.firestore();
 
         // --- 2. GESTION USER ---
         let user = localStorage.getItem('s_user');
         if(!user) { user = prompt("Qui es-tu ? (samia / quincy)").toLowerCase().trim(); localStorage.setItem('s_user', user); }
+        document.getElementById('user-display').innerText = user;
         function logout() { localStorage.removeItem('s_user'); location.reload(); }
 
         // --- 3. NAVIGATION ---
@@ -218,23 +255,24 @@
         const days = new Date(dt.getFullYear(), dt.getMonth()+1, 0).getDate();
         const grid = document.getElementById('calendar-grid');
         for(let i=1; i<=days; i++) {
-            grid.innerHTML += `<div onclick="selDate(${i})" class="aspect-square flex items-center justify-center bg-gray-50 rounded cursor-pointer text-xs">${i}</div>`;
+            grid.innerHTML += `<div onclick="selDate(${i})" class="aspect-square flex items-center justify-center bg-gray-50 rounded-lg cursor-pointer text-xs hover:bg-orange-100 transition">${i}</div>`;
         }
         window.selDate = (d) => {
             const date = `${dt.getFullYear()}-${dt.getMonth()+1}-${d}`;
             document.getElementById('event-box').classList.remove('hidden');
-            document.getElementById('sel-date').innerText = date;
+            document.getElementById('sel-date').innerText = "Le " + date;
             loadEvents(date);
         };
         window.addEvent = () => {
-            const t = prompt("RDV :"); 
-            const d = document.getElementById('sel-date').innerText;
+            const t = document.getElementById('new-event-input').value; 
+            const d = document.getElementById('sel-date').innerText.replace("Le ", "");
             if(t) db.collection('events').add({ title: t, date: d });
+            document.getElementById('new-event-input').value = "";
         };
         function loadEvents(d) {
             db.collection('events').where('date', '==', d).onSnapshot(snap => {
                 const l = document.getElementById('event-list'); l.innerHTML = '';
-                snap.forEach(doc => l.innerHTML += `<div class="flex justify-between border-b"><span>${doc.data().title}</span> <span onclick="del('events','${doc.id}')" class="text-red-400 cursor-pointer">x</span></div>`);
+                snap.forEach(doc => l.innerHTML += `<div class="flex justify-between border-b border-orange-200 pb-1"><span>${doc.data().title}</span> <span onclick="del('events','${doc.id}')" class="text-red-400 cursor-pointer px-2">×</span></div>`);
             });
         }
 
@@ -254,11 +292,12 @@
         window.readImg = (input, prevId) => {
             const reader = new FileReader();
             reader.onload = (e) => {
-                document.getElementById(prevId).style.backgroundImage = `url(${e.target.result})`;
-                document.getElementById(prevId).classList.remove('hidden');
+                const el = document.getElementById(prevId);
+                el.style.backgroundImage = `url(${e.target.result})`;
+                el.classList.remove('hidden');
                 input.dataset.b64 = e.target.result;
             };
-            reader.readAsDataURL(input.files[0]);
+            if(input.files[0]) reader.readAsDataURL(input.files[0]);
         };
 
         window.sendMsg = () => {
@@ -283,17 +322,18 @@
             const l = document.getElementById('chat-list'); l.innerHTML = '';
             snap.forEach(doc => {
                 const d = doc.data();
-                const cls = d.user === user ? "self-end bg-[#C4A484] text-white" : "self-start bg-white";
+                const cls = d.user === user ? "self-end bg-[#C4A484] text-white rounded-br-none" : "self-start bg-white text-gray-700 rounded-bl-none";
                 if(d.type === 'txt') {
-                    l.innerHTML += `<div class="flex flex-col ${d.user === user ? 'items-end' : 'items-start'}"><div class="${cls} px-3 py-2 rounded-xl text-sm max-w-[80%]">${d.txt}</div></div>`;
+                    l.innerHTML += `<div class="flex flex-col ${d.user === user ? 'items-end' : 'items-start'}"><div class="${cls} px-4 py-2 rounded-2xl text-sm max-w-[80%] shadow-sm mb-1">${d.txt}</div><span class="text-[9px] text-gray-300 mb-2">${d.user}</span></div>`;
                 } else {
                     l.innerHTML += `
-                        <div class="w-full bg-white p-2 rounded-xl border mb-2">
-                            <p class="font-bold text-xs mb-1">${d.q}</p>
+                        <div class="w-full bg-white p-3 rounded-2xl border mb-3 shadow-sm">
+                            <p class="font-bold text-xs mb-2 text-[#C4A484] uppercase">📊 ${d.q}</p>
                             <div class="flex gap-2">
-                                <div class="flex-1 h-20 bg-cover rounded" style="background-image:url('${d.i1}')"></div>
-                                <div class="flex-1 h-20 bg-cover rounded" style="background-image:url('${d.i2}')"></div>
+                                <div class="flex-1 h-24 bg-cover rounded-xl border" style="background-image:url('${d.i1}')"></div>
+                                <div class="flex-1 h-24 bg-cover rounded-xl border" style="background-image:url('${d.i2}')"></div>
                             </div>
+                            <p class="text-[9px] text-gray-300 mt-1 text-right">Par ${d.user}</p>
                         </div>`;
                 }
             });
@@ -312,7 +352,8 @@
                     const d = doc.data(); t += parseInt(d.pay);
                     l.innerHTML += `<div class="grid grid-cols-3 text-xs border-b py-2 items-center">
                         <span>${d.name}</span> <span class="text-gray-400">${d.prev}€</span>
-                        <input type="number" value="${d.pay}" onchange="updPay('${cat}','${doc.id}',this.value)" class="bg-gray-100 w-16 p-1">
+                        <input type="number" value="${d.pay}" onchange="updPay('${cat}','${doc.id}',this.value)" class="bg-gray-50 w-full p-1 rounded border text-center">
+                        <button onclick="del('budget_${cat}','${doc.id}')" class="text-red-300 text-[9px] text-right col-span-3 mt-1">Supprimer</button>
                     </div>`;
                 });
                 document.getElementById(totId).innerText = t + "€";
@@ -326,22 +367,26 @@
         window.addWish = () => {
             const n = document.getElementById('w-name').value;
             const l = document.getElementById('w-link').value;
-            const img = document.getElementById('w-file').dataset.b64 || "https://via.placeholder.com/100";
+            const img = document.getElementById('w-file').dataset.b64 || "https://via.placeholder.com/150";
             if(n) {
                 db.collection('wishlist').add({ name:n, link:l, img, user });
                 document.getElementById('w-name').value = '';
                 document.getElementById('w-prev').classList.add('hidden');
+                alert("Ajouté !");
             }
         };
         db.collection('wishlist').onSnapshot(snap => {
             const g = document.getElementById('wish-grid'); g.innerHTML = '';
             snap.forEach(doc => {
                 const d = doc.data();
-                g.innerHTML += `<div class="card p-2 text-center relative">
-                    <div class="h-24 bg-cover bg-center rounded mb-1" style="background-image:url('${d.img}')"></div>
-                    <p class="font-bold text-xs truncate">${d.name}</p>
-                    <a href="${d.link}" target="_blank" class="text-[10px] text-blue-400 underline">Lien</a>
-                    <button onclick="del('wishlist','${doc.id}')" class="absolute top-1 right-1 text-red-500 bg-white rounded-full w-5 h-5">x</button>
+                g.innerHTML += `<div class="card p-2 text-center relative overflow-hidden">
+                    <div class="h-28 bg-cover bg-center rounded-lg mb-2" style="background-image:url('${d.img}')"></div>
+                    <p class="font-bold text-xs truncate mb-1">${d.name}</p>
+                    <div class="flex justify-between items-center px-1">
+                        <span class="text-[9px] uppercase font-bold text-gray-300">${d.user}</span>
+                        ${d.link ? `<a href="${d.link}" target="_blank" class="text-[10px] text-blue-400 underline">Voir</a>` : ''}
+                    </div>
+                    <button onclick="del('wishlist','${doc.id}')" class="absolute top-2 right-2 bg-white/90 rounded-full w-6 h-6 text-red-500 shadow-sm flex items-center justify-center">×</button>
                 </div>`;
             });
         });
@@ -351,7 +396,10 @@
         const today = new Date().toISOString().split('T')[0];
         const pBox = document.getElementById('prayers-box');
         prayers.forEach(p => {
-            pBox.innerHTML += `<div class="flex justify-between text-sm"><span>${p}</span><input type="checkbox" id="chk-${p}" onchange="checkP('${p}')"></div>`;
+            pBox.innerHTML += `<div class="flex justify-between text-sm py-1 border-b border-gray-100 last:border-0">
+                <span class="font-medium text-gray-600">${p}</span>
+                <input type="checkbox" id="chk-${p}" onchange="checkP('${p}')" class="w-5 h-5 accent-[#C4A484]">
+            </div>`;
         });
         window.checkP = (p) => db.collection('prayers').doc(`${today}_${user}`).set({ [p]: document.getElementById(`chk-${p}`).checked }, {merge:true});
         db.collection('prayers').doc(`${today}_${user}`).onSnapshot(doc => {
@@ -369,7 +417,7 @@
             }
         });
 
-        window.del = (c,id) => db.collection(c).doc(id).delete();
+        window.del = (c,id) => { if(confirm("Supprimer ?")) db.collection(c).doc(id).delete(); };
 
     </script>
 </body>
