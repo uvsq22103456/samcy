@@ -29,25 +29,27 @@
             border: 1px solid rgba(0,0,0,0.02);
         }
         
-        /* CALENDRIER (AJUSTÉ) */
+        /* CALENDRIER (CASES PLUS GRANDES & CARRÉES) */
         .calendar-grid { 
             display: grid; 
             grid-template-columns: repeat(7, 1fr); 
-            gap: 8px; /* Espacé */
+            gap: 4px; /* Espacement réduit pour agrandir les cases */
             margin-top: 15px;
         }
         .cal-day { 
-            aspect-square: 1/1; 
+            aspect-ratio: 1 / 1; /* Force le carré parfait */
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            border-radius: 12px; font-size: 13px; font-weight: 700; 
+            border-radius: 10px; /* Un peu moins arrondi pour faire plus carré */
+            font-size: 15px; /* Chiffre plus grand */
+            font-weight: 700; 
             background: #F3F4F6; color: #9CA3AF; 
             position: relative;
         }
         .cal-day.today { background: var(--primary); color: white; box-shadow: 0 4px 10px rgba(196, 164, 132, 0.4); }
-        .has-event::after { content: ''; position: absolute; bottom: 5px; width: 5px; height: 5px; background: #C4A484; border-radius: 50%; }
+        .has-event::after { content: ''; position: absolute; bottom: 4px; width: 5px; height: 5px; background: #C4A484; border-radius: 50%; }
         .cal-day.today.has-event::after { background: white; }
 
-        /* MOOD (AJUSTÉ) */
+        /* MOOD */
         .mood-btn { 
             font-size: 28px; 
             opacity: 0.5; 
@@ -101,8 +103,7 @@
                 <button onclick="setMood('😍',this)" class="mood-btn">😍</button>
                 <button onclick="setMood('😊',this)" class="mood-btn">😊</button>
                 <button onclick="setMood('🤲',this)" class="mood-btn">🤲</button>
-                <button onclick="setMood('💍',this)" class="mood-btn">💍</button>
-                <button onclick="setMood('😴',this)" class="mood-btn">😴</button>
+                <button onclick="setMood('😔',this)" class="mood-btn">😔</button> <button onclick="setMood('😴',this)" class="mood-btn">😴</button>
             </div>
             <div class="flex justify-around border-t pt-4 bg-gray-50 -mx-5 -mb-5 pb-4 rounded-b-[24px]">
                 <div><span class="text-[9px] font-black text-gray-300 block mb-1">SAMIA</span><div id="m-samia" class="text-2xl">😶</div></div>
@@ -181,8 +182,8 @@
         </div>
         
         <h3 class="text-xs font-bold text-gray-400 uppercase mb-2 ml-2">💰 Dépenses prévues</h3>
-        <details class="card" open><summary class="font-bold text-sm cursor-pointer list-none flex justify-between items-center text-gray-700"><span>💍 Mariage</span> <span id="t-wed" class="text-[10px] bg-orange-50 text-orange-600 font-bold px-2 py-1 rounded-lg">0€</span></summary><div id="l-wed" class="mt-4 space-y-3"></div><button onclick="addBud('wed')" class="w-full py-3 border border-dashed border-gray-200 rounded-xl text-[10px] text-gray-400 mt-4 font-bold">+ Ajouter une dépense</button></details>
-        <details class="card"><summary class="font-bold text-sm cursor-pointer list-none flex justify-between items-center text-gray-700"><span>🏠 Appartement</span> <span id="t-apt" class="text-[10px] bg-blue-50 text-blue-600 font-bold px-2 py-1 rounded-lg">0€</span></summary><div id="l-apt" class="mt-4 space-y-3"></div><button onclick="addBud('apt')" class="w-full py-3 border border-dashed border-gray-200 rounded-xl text-[10px] text-gray-400 mt-4 font-bold">+ Ajouter une dépense</button></details>
+        <details class="card" open><summary class="font-bold text-sm cursor-pointer list-none flex justify-between items-center text-gray-700"><span>💍 Mariage</span> <span id="t-wed" class="text-[10px] bg-orange-50 text-orange-600 font-bold px-2 py-1 rounded-lg">0€</span></summary><div id="l-wed" class="mt-4 space-y-3"></div><button onclick="addBud('wed')" class="w-full py-3 border border-dashed border-gray-200 rounded-xl text-[10px] text-gray-400 mt-4 font-bold">+ Ajouter dépense</button></details>
+        <details class="card"><summary class="font-bold text-sm cursor-pointer list-none flex justify-between items-center text-gray-700"><span>🏠 Appartement</span> <span id="t-apt" class="text-[10px] bg-blue-50 text-blue-600 font-bold px-2 py-1 rounded-lg">0€</span></summary><div id="l-apt" class="mt-4 space-y-3"></div><button onclick="addBud('apt')" class="w-full py-3 border border-dashed border-gray-200 rounded-xl text-[10px] text-gray-400 mt-4 font-bold">+ Ajouter dépense</button></details>
 
         <div class="mt-6 border-t border-gray-200 pt-6">
             <h3 class="text-xs font-bold text-gray-400 uppercase mb-3 ml-2">📍 Carnet de Repérages (Salles, Apparts...)</h3>
@@ -228,7 +229,7 @@
     </nav>
 
     <script>
-        // --- COLLE TES CLÉS ICI ---
+        // --- CLES ---
         const firebaseConfig = {
             apiKey: "AIzaSyCBZ96lSFIWzPsHklwk3ZU8kfWudfp8oVQ",
             authDomain: "samcy-1136c.firebaseapp.com",
@@ -296,30 +297,22 @@
             } else { document.getElementById('countdown').classList.add('hidden'); }
         });
 
-        // Calendar (CORRIGÉ & AGRANDI)
+        // Calendar (FIX DATES)
         const dt=new Date(); 
         const monthNames = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
         document.getElementById('cal-title').innerText = monthNames[dt.getMonth()] + " " + dt.getFullYear();
-        
         const dim=new Date(dt.getFullYear(),dt.getMonth()+1,0).getDate();
-        const startDay = new Date(dt.getFullYear(), dt.getMonth(), 1).getDay(); 
-        const shift = startDay === 0 ? 6 : startDay - 1; 
-        
-        const calGrid = document.getElementById('cal-grid');
-        calGrid.innerHTML = "";
+        const startDay = new Date(dt.getFullYear(), dt.getMonth(), 1).getDay(); const shift = startDay === 0 ? 6 : startDay - 1; 
+        const calGrid = document.getElementById('cal-grid'); calGrid.innerHTML = "";
         for(let k=0; k<shift; k++) calGrid.innerHTML+='<div></div>';
-        for(let i=1;i<=dim;i++){ 
-            const dStr=`${dt.getFullYear()}-${(dt.getMonth()+1).toString().padStart(2,'0')}-${i.toString().padStart(2,'0')}`; 
-            calGrid.innerHTML+=`<div onclick="selD('${dStr}')" class="cal-day cursor-pointer" id="day-${dStr}">${i}</div>`; 
-        }
+        for(let i=1;i<=dim;i++){ const dStr=`${dt.getFullYear()}-${(dt.getMonth()+1).toString().padStart(2,'0')}-${i.toString().padStart(2,'0')}`; calGrid.innerHTML+=`<div onclick="selD('${dStr}')" class="cal-day cursor-pointer" id="day-${dStr}">${i}</div>`; }
         
         db.collection('events').onSnapshot(s=>{ 
             document.querySelectorAll('.has-event').forEach(e=>e.classList.remove('has-event')); 
             s.forEach(d=>{ 
                 const date=d.data().d; 
-                // Fix pour les anciennes dates
                 let el = document.getElementById(`day-${date}`);
-                if (!el) {
+                if (!el) { // Compatibilité anciennes dates sans zéro
                     const parts = date.split('-');
                     if(parts.length === 3) {
                         const normDate = `${parts[0]}-${parts[1].padStart(2,'0')}-${parts[2].padStart(2,'0')}`;
@@ -341,25 +334,8 @@
 
         // CHAT
         window.sendMsg=()=>{ const t=document.getElementById('msg').value; if(t){ db.collection('chat').add({type:'txt',t,u:user,time:Date.now()}); document.getElementById('msg').value=''; }};
-        window.sendPoll=()=>{ 
-            const q=document.getElementById('pq').value; 
-            if(q){ 
-                db.collection('chat').add({type:'poll',q,i1:imgs.p1||'',i2:imgs.p2||'',v1:0,v2:0,u:user,time:Date.now()}); 
-                document.getElementById('poll-modal').classList.add('hidden'); document.getElementById('pq').value=''; imgs={}; 
-            } 
-        };
-        
-        window.votePoll=(id, side)=>{
-            const ref = db.collection('chat').doc(id);
-            db.runTransaction((transaction) => {
-                return transaction.get(ref).then((sfDoc) => {
-                    if (!sfDoc.exists) return;
-                    const newCount = (sfDoc.data()[side] || 0) + 1;
-                    transaction.update(ref, { [side]: newCount });
-                });
-            });
-        };
-
+        window.sendPoll=()=>{ const q=document.getElementById('pq').value; if(q){ db.collection('chat').add({type:'poll',q,i1:imgs.p1||'',i2:imgs.p2||'',v1:0,v2:0,u:user,time:Date.now()}); document.getElementById('poll-modal').classList.add('hidden'); document.getElementById('pq').value=''; imgs={}; } };
+        window.votePoll=(id, side)=>{ const ref = db.collection('chat').doc(id); db.runTransaction((transaction) => { return transaction.get(ref).then((sfDoc) => { if (!sfDoc.exists) return; const newCount = (sfDoc.data()[side] || 0) + 1; transaction.update(ref, { [side]: newCount }); }); }); };
         db.collection('chat').orderBy('time').onSnapshot(s=>{ const l=document.getElementById('chat-box'); l.innerHTML=''; s.forEach(doc=>{ const d=doc.data(); const mine=d.u===user; 
             if(d.type==='txt') l.innerHTML+=`<div class="flex flex-col ${mine?'items-end':'items-start'}"><div class="${mine?'bg-[#C4A484] text-white rounded-br-none':'bg-white text-gray-600 rounded-bl-none'} px-4 py-3 rounded-2xl text-xs font-bold max-w-[80%] shadow-sm mb-1">${d.t}</div></div>`;
             else {
@@ -368,40 +344,22 @@
             }
         }); l.scrollTop=l.scrollHeight; });
 
-        // BUDGET (FINANCE + REPERAGES)
+        // BUDGET
         window.editSave=()=>{ const v=prompt("Montant (+/-):"); if(v){ const r=prompt("Motif?"); const cur=parseInt(document.getElementById('tot-save').innerText); db.collection('stats').doc('s').set({t:cur+parseInt(v)}); db.collection('hist').add({v,r:r||'?',d:Date.now()}); }};
         db.collection('stats').doc('s').onSnapshot(d=>{ if(d.exists)document.getElementById('tot-save').innerText=d.data().t+" €"; });
         db.collection('hist').orderBy('d','desc').limit(5).onSnapshot(s=>{ document.getElementById('hist-save').innerHTML=''; s.forEach(doc=>{ const d=doc.data(); const c=parseInt(d.v)>0?'text-green-500':'text-red-500'; document.getElementById('hist-save').innerHTML+=`<div class="flex justify-between border-b border-white/10 pb-1"><span class="w-2/3 truncate font-bold">${d.r}</span><span class="${c} font-black">${d.v}€</span></div>`; }); });
         
-        window.addBud=(c)=>{ 
-            const n=prompt("Quoi? (ex: Traiteur)"); 
-            const p=prompt("Prévu? (ex: 500)"); 
-            const l=prompt("Lien? (Optionnel)"); 
-            if(n) db.collection('b_'+c).add({n,p,v:0,l:l||''}); 
-        };
-        function ldBud(c,lid){ 
-            db.collection('b_'+c).onSnapshot(s=>{ 
-                const list=document.getElementById(lid); list.innerHTML=''; let t=0; 
-                s.forEach(doc=>{ 
-                    const d=doc.data(); t+=parseInt(d.v); 
-                    list.innerHTML+=`<div class="flex flex-col border-b border-gray-100 py-3"><div class="flex justify-between items-center text-xs"><span class="font-bold text-gray-700">${d.n}</span><span class="text-gray-400 font-bold">${d.p}€</span><input type="number" value="${d.v}" onchange="upBud('${c}','${doc.id}',this.value)" class="bg-gray-50 w-12 p-2 rounded-lg text-center font-bold text-gray-600 outline-none"><button onclick="del('b_${c}','${doc.id}')" class="text-gray-300 hover:text-red-400 ml-2">x</button></div>${d.l ? `<a href="${d.l}" target="_blank" class="text-[9px] text-[#C4A484] underline mt-1 font-bold">Voir le lien 🔗</a>` : ''}</div>`; 
-                }); 
-                document.getElementById('t-'+c).innerText=t+"€"; 
-            }); 
-        }
+        window.addBud=(c)=>{ const n=prompt("Quoi? (ex: Traiteur)"); const p=prompt("Prévu? (ex: 500)"); const l=prompt("Lien? (Optionnel)"); if(n) db.collection('b_'+c).add({n,p,v:0,l:l||''}); };
+        function ldBud(c,lid){ db.collection('b_'+c).onSnapshot(s=>{ const list=document.getElementById(lid); list.innerHTML=''; let t=0; s.forEach(doc=>{ const d=doc.data(); t+=parseInt(d.v); list.innerHTML+=`<div class="flex flex-col border-b border-gray-100 py-3"><div class="flex justify-between items-center text-xs"><span class="font-bold text-gray-700">${d.n}</span><span class="text-gray-400 font-bold">${d.p}€</span><input type="number" value="${d.v}" onchange="upBud('${c}','${doc.id}',this.value)" class="bg-gray-50 w-12 p-2 rounded-lg text-center font-bold text-gray-600 outline-none"><button onclick="del('b_${c}','${doc.id}')" class="text-gray-300 hover:text-red-400 ml-2">x</button></div>${d.l ? `<a href="${d.l}" target="_blank" class="text-[9px] text-[#C4A484] underline mt-1 font-bold">Voir le lien 🔗</a>` : ''}</div>`; }); document.getElementById('t-'+c).innerText=t+"€"; }); }
         window.upBud=(c,id,v)=>db.collection('b_'+c).doc(id).update({v});
         ldBud('wed','l-wed'); ldBud('apt','l-apt');
 
-        // REPERAGES (NEW)
         window.addRep=()=>{ const n=document.getElementById('rep-name').value; const l=document.getElementById('rep-link').value; const c=document.getElementById('rep-cat').value; const i=imgs.rep||"https://via.placeholder.com/150"; if(n){ db.collection('reperages').add({n,l,c,i,u:user}); document.getElementById('rep-name').value=''; imgs.rep=''; document.getElementById('v-rep').classList.add('hidden'); } };
-        db.collection('reperages').onSnapshot(s=>{ 
-            const g=document.getElementById('rep-grid'); g.innerHTML=''; 
-            s.forEach(doc=>{ const d=doc.data(); const ic=d.c==='Mariage'?'💍':'🏠';
-            g.innerHTML+=`<div class="card p-0 overflow-hidden relative"><div class="h-28 bg-cover bg-center" style="background-image:url('${d.i}')"></div><div class="p-3"><div class="flex justify-between"><p class="font-bold text-xs truncate w-2/3">${d.n}</p><span class="text-xs">${ic}</span></div>${d.l?`<a href="${d.l}" target="_blank" class="text-[9px] text-[#C4A484] font-bold underline">Voir</a>`:''}</div><button onclick="del('reperages','${doc.id}')" class="absolute top-1 right-1 bg-white rounded-full w-5 h-5 flex items-center justify-center text-red-400 shadow">x</button></div>`; }); 
-        });
+        db.collection('reperages').onSnapshot(s=>{ const g=document.getElementById('rep-grid'); g.innerHTML=''; s.forEach(doc=>{ const d=doc.data(); const ic=d.c==='Mariage'?'💍':'🏠';
+            g.innerHTML+=`<div class="card p-0 overflow-hidden relative"><div class="h-28 bg-cover bg-center" style="background-image:url('${d.i}')"></div><div class="p-3"><div class="flex justify-between"><p class="font-bold text-xs truncate w-2/3">${d.n}</p><span class="text-xs">${ic}</span></div>${d.l?`<a href="${d.l}" target="_blank" class="text-[9px] text-[#C4A484] font-bold underline">Voir</a>`:''}</div><button onclick="del('reperages','${doc.id}')" class="absolute top-1 right-1 bg-white rounded-full w-5 h-5 flex items-center justify-center text-red-400 shadow">x</button></div>`; }); });
 
         // WISHLIST
-        window.addWish=()=>{ const n=document.getElementById('w-n').value; const p=document.getElementById('w-p').value; const l=document.getElementById('w-l').value; const i=imgs.wish||"https://via.placeholder.com/150"; if(n){ db.collection('wish').add({n,p,l,i,u:user}); document.getElementById('w-n').value=''; document.getElementById('w-p').value=''; imgs.wish=''; document.getElementById('v-w').classList.add('hidden'); document.getElementById('txt-w').innerHTML='<i class="fa-solid fa-image mr-1"></i> Ajouter une photo'; } };
+        window.addWish=()=>{ const n=document.getElementById('w-n').value; const p=document.getElementById('w-p').value; const l=document.getElementById('w-l').value; const i=imgs.wish||"https://via.placeholder.com/150"; if(n){ db.collection('wish').add({n,p,l,i,u:user}); document.getElementById('w-n').value=''; document.getElementById('w-p').value=''; imgs.wish=''; document.getElementById('v-w').classList.add('hidden'); } };
         db.collection('wish').onSnapshot(s=>{ const g=document.getElementById('w-grid'); g.innerHTML=''; s.forEach(doc=>{ const d=doc.data(); const tag=d.u==='samia'?'bg-[#C4A484] text-white':'bg-gray-200 text-gray-500'; g.innerHTML+=`<div class="card p-2 text-center relative overflow-hidden"><div class="h-32 bg-cover bg-center rounded-xl mb-2" style="background-image:url('${d.i}')"></div><div class="flex justify-between items-start mb-1 px-1"><p class="font-black text-xs truncate w-2/3 text-left text-gray-700">${d.n}</p><p class="text-xs font-black text-[#C4A484]">${d.p?d.p+'€':''}</p></div><div class="flex justify-between items-center px-1 mt-1"><span class="${tag} text-[8px] px-2 py-1 rounded-md font-black uppercase tracking-wider">${d.u}</span>${d.l?`<a href="${d.l}" target="_blank" class="text-[9px] text-gray-400 font-bold underline">Voir</a>`:''}</div><button onclick="del('wish','${doc.id}')" class="absolute top-2 right-2 bg-white/90 rounded-full w-6 h-6 text-red-400 shadow-sm flex items-center justify-center backdrop-blur-sm">×</button></div>`; }); });
 
         // DEEN
