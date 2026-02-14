@@ -8,7 +8,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="S & Q Love">
-    <link rel="apple-touch-icon" href="https://i.postimg.cc/R0SFjnSX/IMG-8605.png">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2530/2530862.png">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -168,13 +168,19 @@
 
     <div id="budget" class="page">
         <h2 class="text-xl font-black italic text-[#C4A484] mb-4 ml-2">FINANCES & PROJETS</h2>
+        
         <div class="card bg-[#4A443F] text-white border-none">
-            <div class="flex justify-between items-center mb-4"><div><p class="text-[10px] uppercase opacity-60 font-bold tracking-widest">Cagnotte</p><h2 class="text-3xl font-black mt-1" id="tot-save">0 €</h2></div><button onclick="editSave()" class="bg-white/10 backdrop-blur-md px-4 py-2 rounded-xl text-xs font-bold hover:bg-white/20 transition">+ / -</button></div>
-            <div id="hist-save" class="text-[10px] opacity-70 border-t border-white/10 pt-3 space-y-2 max-h-24 overflow-y-auto"></div>
+            <div class="flex justify-between items-center mb-2"><div><p class="text-[10px] uppercase opacity-60 font-bold tracking-widest">Cagnotte</p><h2 class="text-3xl font-black mt-1" id="tot-save">0 €</h2></div><button onclick="editSave()" class="bg-white/10 backdrop-blur-md px-4 py-2 rounded-xl text-xs font-bold hover:bg-white/20 transition">+ / -</button></div>
+            <details class="group mt-2">
+                <summary class="text-[10px] opacity-70 cursor-pointer list-none flex items-center gap-1 border-t border-white/10 pt-2">📜 Voir l'historique</summary>
+                <div id="hist-save" class="text-[10px] opacity-90 pt-2 space-y-2 max-h-32 overflow-y-auto"></div>
+            </details>
         </div>
+
         <h3 class="text-xs font-bold text-gray-400 uppercase mb-2 ml-2">💰 Dépenses prévues</h3>
         <details class="card" open><summary class="font-bold text-sm cursor-pointer list-none flex justify-between items-center text-gray-700"><span>💍 Mariage</span> <span id="t-wed" class="text-[10px] bg-orange-50 text-orange-600 font-bold px-2 py-1 rounded-lg">0€</span></summary><div id="l-wed" class="mt-4 space-y-3"></div><button onclick="addBud('wed')" class="w-full py-3 border border-dashed border-gray-200 rounded-xl text-[10px] text-gray-400 mt-4 font-bold">+ Ajouter dépense</button></details>
         <details class="card"><summary class="font-bold text-sm cursor-pointer list-none flex justify-between items-center text-gray-700"><span>🏠 Appartement</span> <span id="t-apt" class="text-[10px] bg-blue-50 text-blue-600 font-bold px-2 py-1 rounded-lg">0€</span></summary><div id="l-apt" class="mt-4 space-y-3"></div><button onclick="addBud('apt')" class="w-full py-3 border border-dashed border-gray-200 rounded-xl text-[10px] text-gray-400 mt-4 font-bold">+ Ajouter dépense</button></details>
+        
         <div class="mt-6 border-t border-gray-200 pt-6">
             <h3 class="text-xs font-bold text-gray-400 uppercase mb-3 ml-2">📍 Carnet de Repérages (Salles, Apparts...)</h3>
             <div class="card bg-gray-50 border-dashed border-2 border-gray-200">
@@ -201,7 +207,7 @@
     <div id="deen" class="page">
         <h2 class="text-xl font-black italic text-[#C4A484] mb-4 ml-2">SPIRITUALITÉ</h2>
         <div class="card"><div id="prayers" class="space-y-1"></div></div>
-        <div class="card"><p class="text-[10px] font-black uppercase text-gray-300 mb-3 tracking-widest">Nos invocations communes</p><textarea id="duas" class="w-full h-24 p-3 bg-gray-50 rounded-xl text-sm italic outline-none resize-none text-gray-600 border border-gray-100" placeholder="Ya Allah..."></textarea><button onclick="saveDua()" class="w-full mt-3 bg-slate-100 text-slate-500 py-3 rounded-xl text-xs font-bold shadow-sm">Enregistrer</button></div>
+        <div class="card"><p class="text-[10px] font-black uppercase text-gray-300 mb-3 tracking-widest">Nos invocations communes</p><textarea id="duas" class="w-full h-24 p-3 bg-gray-50 rounded-xl text-sm italic outline-none resize-none text-gray-600 border border-gray-100" placeholder="Ya Allah..."></textarea><button onclick="saveDua()" id="btn-dua" class="w-full mt-3 bg-slate-100 text-slate-500 py-3 rounded-xl text-xs font-bold shadow-sm transition">Enregistrer</button></div>
         <div class="grid grid-cols-2 gap-4"><div class="card text-center py-6"><p class="text-[9px] font-black text-gray-300 tracking-widest">VERSETS</p><h3 id="cv" class="text-4xl font-black my-2 text-[#C4A484]">0</h3><div class="flex justify-center gap-3"><button onclick="upC('v',-1)" class="w-8 h-8 rounded-full bg-gray-100">-</button><button onclick="upC('v',1)" class="w-8 h-8 rounded-full bg-[#C4A484] text-white shadow-lg">+</button></div></div><div class="card text-center py-6"><p class="text-[9px] font-black text-gray-300 tracking-widest">PAGES</p><h3 id="cp" class="text-4xl font-black my-2 text-[#C4A484]">0</h3><div class="flex justify-center gap-3"><button onclick="upC('p',-1)" class="w-8 h-8 rounded-full bg-gray-100">-</button><button onclick="upC('p',1)" class="w-8 h-8 rounded-full bg-[#C4A484] text-white shadow-lg">+</button></div></div></div>
     </div>
 
@@ -227,7 +233,7 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // AUTH SYSTEM (NETFLIX STYLE)
+        // AUTH SYSTEM
         let user = localStorage.getItem('u');
         if(user) { document.getElementById('login-screen').classList.add('hidden'); document.getElementById('u-display').innerText = user; }
         window.login = (name) => { user = name; localStorage.setItem('u', user); document.getElementById('u-display').innerText = user; document.getElementById('login-screen').classList.add('hidden'); location.reload(); };
@@ -295,7 +301,7 @@
         window.selD=(d)=>{ document.getElementById('evt-box').classList.remove('hidden'); document.getElementById('sel-date').innerText=d; db.collection('events').where('d','==',d).onSnapshot(s=>{ const l=document.getElementById('evt-list');l.innerHTML=''; s.forEach(doc=>l.innerHTML+=`<div class="flex justify-between items-center bg-gray-50 p-2 rounded-lg text-xs font-bold text-gray-600"><span>${doc.data().t}</span><span onclick="del('events','${doc.id}')" class="text-red-300 cursor-pointer px-2">x</span></div>`); }); };
         window.addEvt=()=>{ const t=document.getElementById('new-evt').value; const d=document.getElementById('sel-date').innerText; if(t)db.collection('events').add({t,d}); document.getElementById('new-evt').value=''; };
 
-        // PLACES (NEW REVIEW SYSTEM)
+        // PLACES
         window.addPlace=()=>{ const n=document.getElementById('pl-name').value; const c=document.getElementById('pl-cat').value; const l=document.getElementById('pl-loc').value; if(n){ db.collection('places').add({n,c,l,v:false,r:0,comm:''}); document.getElementById('pl-name').value=''; }};
         let cF='all'; window.filterP=(c)=>{ cF=c; renderP(); };
         let allP=[]; db.collection('places').onSnapshot(s=>{ allP=[]; s.forEach(d=>allP.push({id:d.id,...d.data()})); renderP(); });
@@ -339,11 +345,20 @@
                 l.innerHTML+=`<div class="w-full bg-white p-4 rounded-3xl border border-gray-100 mb-3 shadow-sm"><p class="font-black text-xs mb-3 text-[#C4A484] uppercase tracking-wide">📊 ${d.q}</p><div class="flex gap-2"><div onclick="votePoll('${doc.id}', 'v1')" class="flex-1 relative cursor-pointer active:scale-95 transition"><div class="h-24 bg-cover rounded-xl border border-gray-100" style="background-image:url('${d.i1}')"></div><div class="absolute bottom-1 right-1 bg-black/50 text-white text-[9px] font-bold px-2 rounded-full">${d.v1||0} (${p1}%)</div></div><div onclick="votePoll('${doc.id}', 'v2')" class="flex-1 relative cursor-pointer active:scale-95 transition"><div class="h-24 bg-cover rounded-xl border border-gray-100" style="background-image:url('${d.i2}')"></div><div class="absolute bottom-1 right-1 bg-black/50 text-white text-[9px] font-bold px-2 rounded-full">${d.v2||0} (${p2}%)</div></div></div></div>`; }
         }); l.scrollTop=l.scrollHeight; });
 
-        // BUDGET
+        // BUDGET (REPLIABLE ET DELETE)
         window.editSave=()=>{ const v=prompt("Montant (+/-):"); if(v){ const r=prompt("Motif?"); const cur=parseInt(document.getElementById('tot-save').innerText); db.collection('stats').doc('s').set({t:cur+parseInt(v)}); db.collection('hist').add({v,r:r||'?',d:Date.now()}); }};
         db.collection('stats').doc('s').onSnapshot(d=>{ if(d.exists)document.getElementById('tot-save').innerText=d.data().t+" €"; });
-        db.collection('hist').orderBy('d','desc').limit(5).onSnapshot(s=>{ document.getElementById('hist-save').innerHTML=''; s.forEach(doc=>{ const d=doc.data(); const c=parseInt(d.v)>0?'text-green-500':'text-red-500'; document.getElementById('hist-save').innerHTML+=`<div class="flex justify-between border-b border-white/10 pb-1"><span class="w-2/3 truncate font-bold">${d.r}</span><span class="${c} font-black">${d.v}€</span></div>`; }); });
-        window.addBud=(c)=>{ const n=prompt("Quoi?"); const p=prompt("Prévu?"); const l=prompt("Lien? (Optionnel)"); if(n) db.collection('b_'+c).add({n,p,v:0,l:l||''}); };
+        
+        db.collection('hist').orderBy('d','desc').limit(15).onSnapshot(s=>{ 
+            const l=document.getElementById('hist-save'); l.innerHTML=''; 
+            s.forEach(doc=>{ 
+                const d=doc.data(); const val=parseInt(d.v); const c=val>0?'text-green-400':'text-red-400';
+                l.innerHTML+=`<div class="flex justify-between border-b border-white/10 pb-1 mb-1 items-center"><span class="w-2/3 truncate font-bold">${d.r}</span><span class="${c} font-black text-xs">${d.v}€</span><button onclick="delHist('${doc.id}',${val})" class="text-gray-400 text-xs hover:text-white ml-2">✕</button></div>`; 
+            }); 
+        });
+        window.delHist = (id, val) => { if(confirm("Supprimer ? (Le total sera ajusté)")) { db.collection('hist').doc(id).delete(); const cur=parseInt(document.getElementById('tot-save').innerText); db.collection('stats').doc('s').set({t:cur-val}); } };
+
+        window.addBud=(c)=>{ const n=prompt("Quoi?"); const p=prompt("Prévu?"); const l=prompt("Lien?"); if(n) db.collection('b_'+c).add({n,p,v:0,l:l||''}); };
         function ldBud(c,lid){ db.collection('b_'+c).onSnapshot(s=>{ const list=document.getElementById(lid); list.innerHTML=''; let t=0; s.forEach(doc=>{ const d=doc.data(); t+=parseInt(d.v); list.innerHTML+=`<div class="flex flex-col border-b border-gray-100 py-3"><div class="flex justify-between items-center text-xs"><span class="font-bold text-gray-700">${d.n}</span><span class="text-gray-400 font-bold">${d.p}€</span><input type="number" value="${d.v}" onchange="upBud('${c}','${doc.id}',this.value)" class="bg-gray-50 w-12 p-2 rounded-lg text-center font-bold text-gray-600 outline-none"><button onclick="del('b_${c}','${doc.id}')" class="text-gray-300 hover:text-red-400 ml-2">x</button></div>${d.l ? `<a href="${d.l}" target="_blank" class="text-[9px] text-[#C4A484] underline mt-1 font-bold">Voir le lien 🔗</a>` : ''}</div>`; }); }); }
         window.upBud=(c,id,v)=>db.collection('b_'+c).doc(id).update({v});
         ldBud('wed','l-wed'); ldBud('apt','l-apt');
@@ -361,8 +376,21 @@
         prs.forEach(p=>{ document.getElementById('prayers').innerHTML+=`<div class="flex justify-between py-3 border-b border-gray-100 last:border-0"><span class="text-sm font-bold text-gray-600">${p}</span><input type="checkbox" id="chk-${p}" onchange="chkP('${p}')" class="accent-[#C4A484] w-5 h-5 cursor-pointer"></div>`; });
         window.chkP=(p)=>db.collection('pray').doc(`${today}_${user}`).set({[p]:document.getElementById(`chk-${p}`).checked},{merge:true});
         db.collection('pray').doc(`${today}_${user}`).onSnapshot(d=>{ if(d.exists)prs.forEach(p=>{if(document.getElementById(`chk-${p}`))document.getElementById(`chk-${p}`).checked=d.data()[p]}); });
-        window.saveDua=()=>db.collection('deen').doc('d').set({t:document.getElementById('duas').value});
+        
+        // SAVE DUA (CORRIGÉ & FEEDBACK)
+        window.saveDua=()=>{ 
+            const t = document.getElementById('duas').value;
+            db.collection('deen').doc('d').set({t}, {merge:true});
+            const btn = document.getElementById('btn-dua');
+            btn.innerText = "C'est noté ✅";
+            btn.classList.add('bg-green-100', 'text-green-600');
+            setTimeout(() => {
+                btn.innerText = "Enregistrer";
+                btn.classList.remove('bg-green-100', 'text-green-600');
+            }, 2000);
+        };
         db.collection('deen').doc('d').onSnapshot(d=>{if(d.exists)document.getElementById('duas').value=d.data().t});
+        
         window.upC=(k,v)=>{ const el=document.getElementById(`c${k}`); const val=parseInt(el.innerText)+v; db.collection('cnt').doc(user).set({[k]:val},{merge:true}); };
         db.collection('cnt').doc(user).onSnapshot(d=>{ if(d.exists){document.getElementById('cv').innerText=d.data().v||0; document.getElementById('cp').innerText=d.data().p||0;} });
 
