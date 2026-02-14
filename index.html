@@ -87,9 +87,9 @@
             <p class="text-[10px] font-black uppercase text-gray-300 mb-4 tracking-widest">Humeur du jour</p>
             <div class="flex justify-between px-2 mb-6">
                 <button onclick="setMood('😍',this)" class="mood-btn">😍</button>
-                <button onclick="setMood('😆',this)" class="mood-btn">😆</button>
+                <button onclick="setMood('😊',this)" class="mood-btn">😊</button>
                 <button onclick="setMood('🤲',this)" class="mood-btn">🤲</button>
-                <button onclick="setMood('😔',this)" class="mood-btn">😔</button>
+                <button onclick="setMood('💍',this)" class="mood-btn">💍</button>
                 <button onclick="setMood('😴',this)" class="mood-btn">😴</button>
             </div>
             <div class="flex justify-around border-t pt-4 bg-gray-50 -mx-5 -mb-5 pb-4 rounded-b-[24px]">
@@ -174,8 +174,16 @@
             </div>
             <div id="hist-save" class="text-[10px] opacity-70 border-t border-white/10 pt-3 space-y-2 max-h-24 overflow-y-auto"></div>
         </div>
-        <details class="card" open><summary class="font-bold text-sm cursor-pointer list-none flex justify-between items-center text-gray-700"><span>💍 Mariage</span> <span id="t-wed" class="text-[10px] bg-orange-50 text-orange-600 font-bold px-2 py-1 rounded-lg">0€</span></summary><div id="l-wed" class="mt-4 space-y-3"></div><button onclick="addBud('wed')" class="w-full py-3 border border-dashed border-gray-200 rounded-xl text-[10px] text-gray-400 mt-4 font-bold">+ Ajouter une dépense</button></details>
-        <details class="card"><summary class="font-bold text-sm cursor-pointer list-none flex justify-between items-center text-gray-700"><span>🏠 Appartement</span> <span id="t-apt" class="text-[10px] bg-blue-50 text-blue-600 font-bold px-2 py-1 rounded-lg">0€</span></summary><div id="l-apt" class="mt-4 space-y-3"></div><button onclick="addBud('apt')" class="w-full py-3 border border-dashed border-gray-200 rounded-xl text-[10px] text-gray-400 mt-4 font-bold">+ Ajouter une dépense</button></details>
+        <details class="card" open>
+            <summary class="font-bold text-sm cursor-pointer list-none flex justify-between items-center text-gray-700"><span>💍 Mariage</span> <span id="t-wed" class="text-[10px] bg-orange-50 text-orange-600 font-bold px-2 py-1 rounded-lg">0€</span></summary>
+            <div id="l-wed" class="mt-4 space-y-3"></div>
+            <button onclick="addBud('wed')" class="w-full py-3 border border-dashed border-gray-200 rounded-xl text-[10px] text-gray-400 mt-4 font-bold">+ Ajouter une dépense</button>
+        </details>
+        <details class="card">
+            <summary class="font-bold text-sm cursor-pointer list-none flex justify-between items-center text-gray-700"><span>🏠 Appartement</span> <span id="t-apt" class="text-[10px] bg-blue-50 text-blue-600 font-bold px-2 py-1 rounded-lg">0€</span></summary>
+            <div id="l-apt" class="mt-4 space-y-3"></div>
+            <button onclick="addBud('apt')" class="w-full py-3 border border-dashed border-gray-200 rounded-xl text-[10px] text-gray-400 mt-4 font-bold">+ Ajouter une dépense</button>
+        </details>
     </div>
 
     <div id="wish" class="page">
@@ -338,7 +346,7 @@
             }
         }); l.scrollTop=l.scrollHeight; });
 
-        // BUDGET
+        // BUDGET (LIEN)
         window.editSave=()=>{ const v=prompt("Montant (+/-):"); if(v){ const r=prompt("Motif?"); const cur=parseInt(document.getElementById('tot-save').innerText); db.collection('stats').doc('s').set({t:cur+parseInt(v)}); db.collection('hist').add({v,r:r||'?',d:Date.now()}); }};
         db.collection('stats').doc('s').onSnapshot(d=>{ if(d.exists)document.getElementById('tot-save').innerText=d.data().t+" €"; });
         db.collection('hist').orderBy('d','desc').limit(5).onSnapshot(s=>{ document.getElementById('hist-save').innerHTML=''; s.forEach(doc=>{ const d=doc.data(); const c=parseInt(d.v)>0?'text-green-500':'text-red-500'; document.getElementById('hist-save').innerHTML+=`<div class="flex justify-between border-b border-white/10 pb-1"><span class="w-2/3 truncate font-bold">${d.r}</span><span class="${c} font-black">${d.v}€</span></div>`; }); });
@@ -349,7 +357,16 @@
             const l=prompt("Lien? (Optionnel)"); 
             if(n) db.collection('b_'+c).add({n,p,v:0,l:l||''}); 
         };
-        function ldBud(c,lid){ db.collection('b_'+c).onSnapshot(s=>{ const l=document.getElementById(lid); l.innerHTML=''; let t=0; s.forEach(doc=>{ const d=doc.data(); t+=parseInt(d.v); l.innerHTML+=`<div class="flex flex-col border-b border-gray-100 py-3"><div class="flex justify-between items-center text-xs"><span class="font-bold text-gray-700">${d.n}</span><span class="text-gray-400 font-bold">${d.p}€</span><input type="number" value="${d.v}" onchange="upBud('${c}','${doc.id}',this.value)" class="bg-gray-50 w-12 p-2 rounded-lg text-center font-bold text-gray-600 outline-none"><button onclick="del('b_${c}','${doc.id}')" class="text-gray-300 hover:text-red-400 ml-2">x</button></div>${d.l ? `<a href="${d.l}" target="_blank" class="text-[9px] text-[#C4A484] underline mt-1 font-bold">Voir le lien 🔗</a>` : ''}</div>`; }); document.getElementById('t-'+c).innerText=t+"€"; }); }
+        function ldBud(c,lid){ 
+            db.collection('b_'+c).onSnapshot(s=>{ 
+                const list=document.getElementById(lid); list.innerHTML=''; let t=0; 
+                s.forEach(doc=>{ 
+                    const d=doc.data(); t+=parseInt(d.v); 
+                    list.innerHTML+=`<div class="flex flex-col border-b border-gray-100 py-3"><div class="flex justify-between items-center text-xs"><span class="font-bold text-gray-700">${d.n}</span><span class="text-gray-400 font-bold">${d.p}€</span><input type="number" value="${d.v}" onchange="upBud('${c}','${doc.id}',this.value)" class="bg-gray-50 w-12 p-2 rounded-lg text-center font-bold text-gray-600 outline-none"><button onclick="del('b_${c}','${doc.id}')" class="text-gray-300 hover:text-red-400 ml-2">x</button></div>${d.l ? `<a href="${d.l}" target="_blank" class="text-[9px] text-[#C4A484] underline mt-1 font-bold">Voir le lien 🔗</a>` : ''}</div>`; 
+                }); 
+                document.getElementById('t-'+c).innerText=t+"€"; 
+            }); 
+        }
         window.upBud=(c,id,v)=>db.collection('b_'+c).doc(id).update({v});
         ldBud('wed','l-wed'); ldBud('apt','l-apt');
 
