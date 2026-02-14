@@ -3,190 +3,206 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>S & Q - App</title>
+    <title>S & Q App</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
         
-        :root { --nude: #C4A484; --bg: #F9F7F5; }
-        body { background: var(--bg); font-family: 'Plus Jakarta Sans', sans-serif; color: #4A443F; padding-bottom: 120px; -webkit-tap-highlight-color: transparent; }
+        :root { --primary: #C4A484; --bg: #FDFBF9; }
+        body { font-family: 'Outfit', sans-serif; background-color: var(--bg); color: #5D5550; padding-bottom: 120px; -webkit-tap-highlight-color: transparent; }
         
-        .page { display: none; padding: 20px; animation: fade 0.3s; }
+        .page { display: none; padding: 20px; animation: fadeIn 0.3s; }
         .page.active { display: block; }
-        @keyframes fade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* CARTE STYLE GIRL MOOD */
+        /* DESIGN TYPE "GIRL MOOD" */
         .card { 
             background: white; 
             border-radius: 24px; 
             padding: 20px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
-            margin-bottom: 15px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03); 
+            margin-bottom: 16px; 
+            border: 1px solid rgba(0,0,0,0.02);
         }
         
+        /* CALENDRIER (FIXÉ) */
+        .calendar-grid { 
+            display: grid; 
+            grid-template-columns: repeat(7, 1fr); 
+            gap: 6px; 
+            margin-top: 10px;
+        }
+        .cal-day { 
+            aspect-square: 1/1; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            border-radius: 12px; font-size: 12px; font-weight: 600; 
+            background: #F3F4F6; color: #9CA3AF; 
+            position: relative;
+        }
+        .cal-day.today { background: var(--primary); color: white; box-shadow: 0 4px 10px rgba(196, 164, 132, 0.4); }
+        .has-event::after { content: ''; position: absolute; bottom: 4px; width: 4px; height: 4px; background: #C4A484; border-radius: 50%; }
+        .cal-day.today.has-event::after { background: white; }
+
+        /* MOOD (VISIBLE) */
+        .mood-btn { font-size: 34px; opacity: 1; filter: none; background: none; border: none; transition: 0.2s; }
+        .mood-btn:active { transform: scale(1.2); }
+        .mood-btn.selected { transform: scale(1.2); filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
+
         /* NAVIGATION */
         .nav-bar { 
             position: fixed; bottom: 20px; left: 15px; right: 15px; 
             background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); 
             height: 70px; border-radius: 35px; 
             display: flex; justify-content: space-between; align-items: center; 
-            padding: 0 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); z-index: 999; 
+            padding: 0 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); z-index: 999; 
+            border: 1px solid rgba(255,255,255,0.5);
             overflow-x: auto;
         }
         .nav-btn { color: #D1C7BD; font-size: 20px; min-width: 45px; text-align: center; }
-        .nav-btn.active { color: var(--nude); transform: scale(1.2); }
-
-        /* MOOD */
-        .mood-btn { font-size: 30px; opacity: 0.3; filter: grayscale(1); background: none; border: none; }
-        .mood-btn.active { opacity: 1; filter: grayscale(0); transform: scale(1.2); }
+        .nav-btn.active { color: var(--primary); transform: scale(1.2); }
 
         /* INPUTS */
-        .input-box { width: 100%; background: #F3F4F6; border-radius: 12px; padding: 12px; margin-bottom: 8px; font-size: 14px; outline: none; }
+        .input-style { width: 100%; background: #F8F6F4; border: 1px solid #EEE; border-radius: 14px; padding: 14px; font-size: 13px; outline: none; margin-bottom: 8px; font-weight: 600; }
+        .btn-primary { width: 100%; background: var(--primary); color: white; padding: 14px; border-radius: 14px; font-weight: 800; font-size: 12px; text-transform: uppercase; box-shadow: 0 4px 15px rgba(196, 164, 132, 0.3); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-    <div class="px-6 pt-10 pb-4 flex justify-between items-end">
-        <h1 class="text-2xl font-bold text-[#4A443F]">Samia & Quincy</h1>
-        <button onclick="logout()" class="text-xs text-gray-400 bg-white px-3 py-1 rounded-full border">Compte: <span id="u-name">...</span></button>
+    <div class="px-6 pt-10 pb-2 flex justify-between items-end">
+        <div>
+            <h1 class="text-3xl font-black italic tracking-tighter text-[#4A443F]">S & Q</h1>
+            <p class="text-[10px] font-bold uppercase text-gray-400 tracking-widest">Connecté : <span id="u-display">...</span></p>
+        </div>
+        <button onclick="logout()" class="text-[10px] text-gray-300 underline bg-white px-3 py-1 rounded-full border">Sortir</button>
     </div>
 
     <div id="home" class="page active">
         <div class="card text-center">
-            <p class="text-xs font-bold text-gray-400 mb-4 uppercase">Humeur du jour</p>
-            <div class="flex justify-between px-2 mb-4">
-                <button onclick="setMood('😍', this)" class="mood-btn">😍</button>
-                <button onclick="setMood('😊', this)" class="mood-btn">😊</button>
-                <button onclick="setMood('🤲', this)" class="mood-btn">🤲</button>
-                <button onclick="setMood('😔', this)" class="mood-btn">😔</button>
-                <button onclick="setMood('😴', this)" class="mood-btn">😴</button>
+            <p class="text-[10px] font-black uppercase text-gray-300 mb-4 tracking-widest">Humeur du jour</p>
+            <div class="flex justify-between px-2 mb-6">
+                <button onclick="setMood('😍',this)" class="mood-btn">😍</button>
+                <button onclick="setMood('😊',this)" class="mood-btn">😊</button>
+                <button onclick="setMood('🤲',this)" class="mood-btn">🤲</button>
+                <button onclick="setMood('💍',this)" class="mood-btn">💍</button>
+                <button onclick="setMood('😴',this)" class="mood-btn">😴</button>
             </div>
-            <div class="flex justify-around border-t pt-4">
-                <div><span class="text-[10px] font-bold block text-gray-400">SAMIA</span><span id="m-samia" class="text-2xl">...</span></div>
-                <div><span class="text-[10px] font-bold block text-gray-400">QUINCY</span><span id="m-quincy" class="text-2xl">...</span></div>
+            <div class="flex justify-around border-t pt-4 bg-gray-50 -mx-5 -mb-5 pb-4 rounded-b-[24px]">
+                <div><span class="text-[9px] font-black text-gray-300 block mb-1">SAMIA</span><div id="m-samia" class="text-2xl">😶</div></div>
+                <div><span class="text-[9px] font-black text-gray-300 block mb-1">QUINCY</span><div id="m-quincy" class="text-2xl">😶</div></div>
+            </div>
+        </div>
+
+        <div id="countdown" class="card hidden bg-[#C4A484] text-white border-none shadow-lg">
+            <div class="flex justify-between items-center">
+                <div><p class="text-[10px] font-bold uppercase opacity-80 mb-1">Prochain Event</p><h2 id="next-t" class="text-lg font-black">...</h2><p id="next-d" class="text-xs opacity-90 mt-1">...</p></div>
+                <div class="text-center bg-white/20 px-3 py-2 rounded-xl backdrop-blur-sm"><span id="next-j" class="text-3xl font-black block">0</span><span class="text-[9px] font-bold uppercase">Jours</span></div>
             </div>
         </div>
 
         <div class="card">
-            <h3 class="font-bold mb-3">Calendrier</h3>
-            <div id="cal-grid" class="grid grid-cols-7 gap-1 text-center text-xs mb-2"></div>
-            <div id="evt-box" class="hidden bg-orange-50 p-3 rounded-xl text-xs mt-2 border border-orange-100">
-                <p id="sel-date" class="font-bold text-[#C4A484] mb-2">...</p>
-                <div id="evt-list" class="space-y-1 mb-2"></div>
-                <div class="flex gap-2">
-                    <input type="text" id="new-evt" placeholder="Nouveau RDV..." class="input-box bg-white mb-0">
-                    <button onclick="addEvt()" class="bg-[#C4A484] text-white px-3 rounded-lg">+</button>
-                </div>
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-black text-gray-700 text-sm uppercase">Calendrier</h3>
+                <span id="cal-title" class="text-xs font-bold text-[#C4A484] bg-orange-50 px-2 py-1 rounded-lg">...</span>
+            </div>
+            <div class="grid grid-cols-7 text-center text-[10px] font-bold text-gray-300 mb-2"><span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
+            <div id="cal-grid" class="calendar-grid"></div>
+            
+            <div id="evt-box" class="hidden mt-4 pt-4 border-t border-gray-100">
+                <p id="sel-date" class="text-xs font-black text-[#C4A484] mb-2 uppercase">...</p>
+                <div id="evt-list" class="space-y-2 mb-3"></div>
+                <div class="flex gap-2"><input type="text" id="new-evt" placeholder="Ajouter RDV..." class="input-style mb-0"><button onclick="addEvt()" class="bg-[#C4A484] text-white w-12 rounded-xl flex items-center justify-center font-bold shadow-lg">+</button></div>
             </div>
         </div>
     </div>
 
     <div id="places" class="page">
-        <h2 class="text-lg font-bold mb-4 ml-2">Adresses 🍔</h2>
-        <div class="card bg-gray-50">
-            <input type="text" id="pl-name" placeholder="Nom du lieu" class="input-box bg-white">
-            <div class="flex gap-2">
-                <select id="pl-cat" class="input-box bg-white w-1/3"><option value="Resto">Resto</option><option value="FastFood">Fast</option><option value="Activite">Fun</option></select>
-                <input type="text" id="pl-loc" placeholder="Ville" class="input-box bg-white">
-            </div>
-            <button onclick="addPlace()" class="w-full bg-gray-800 text-white py-3 rounded-xl font-bold text-xs">Ajouter</button>
+        <h2 class="text-xl font-black italic text-[#C4A484] mb-4 ml-2">CARNET D'ADRESSES</h2>
+        <div class="card border-l-4 border-[#C4A484]">
+            <input type="text" id="pl-name" placeholder="Nom du lieu..." class="input-style">
+            <div class="flex gap-2 mb-2"><select id="pl-cat" class="input-style w-1/3 mb-0 text-gray-500"><option value="Resto">Resto</option><option value="FastFood">FastFood</option><option value="Activite">Fun</option></select><input type="text" id="pl-loc" placeholder="Ville/Quartier" class="input-style mb-0"></div>
+            <button onclick="addPlace()" class="btn-primary mt-2">Enregistrer</button>
+        </div>
+        
+        <div class="flex gap-2 overflow-x-auto pb-2 no-scrollbar mb-2">
+            <button onclick="filterP('all')" class="bg-white border px-4 py-2 rounded-full text-xs font-bold shadow-sm whitespace-nowrap text-gray-500">Tout</button>
+            <button onclick="filterP('Resto')" class="bg-white border px-4 py-2 rounded-full text-xs font-bold shadow-sm whitespace-nowrap text-gray-500">🍝 Restos</button>
+            <button onclick="filterP('FastFood')" class="bg-white border px-4 py-2 rounded-full text-xs font-bold shadow-sm whitespace-nowrap text-gray-500">🍔 FastFood</button>
+            <button onclick="filterP('Activite')" class="bg-white border px-4 py-2 rounded-full text-xs font-bold shadow-sm whitespace-nowrap text-gray-500">🎢 Activités</button>
         </div>
         <div id="pl-list" class="space-y-3"></div>
     </div>
 
     <div id="chat" class="page">
-        <h2 class="text-lg font-bold mb-4 text-center">Discussion 💬</h2>
-        <div id="chat-box" class="h-[60vh] overflow-y-auto pb-4 space-y-3 px-1"></div>
-        
-        <div class="fixed bottom-[100px] left-4 right-4 z-50">
-            <div id="poll-modal" class="hidden bg-white p-4 rounded-3xl shadow-2xl border mb-3">
-                <p class="text-xs font-bold mb-2 text-center">SONDAGE PHOTO</p>
-                <input type="text" id="pq" placeholder="Question ?" class="input-box">
+        <h2 class="text-xl font-black italic text-[#C4A484] mb-4 text-center">DISCUSSION</h2>
+        <div id="chat-box" class="h-[60vh] overflow-y-auto pb-4 px-1 space-y-3"></div>
+        <div class="fixed bottom-[100px] left-5 right-5 z-50">
+            <div id="poll-modal" class="hidden bg-white/95 backdrop-blur-xl p-5 rounded-[30px] shadow-2xl border mb-3">
+                <p class="text-xs font-black mb-3 text-center text-gray-400 uppercase">Nouveau Sondage</p>
+                <input type="text" id="pq" placeholder="Ta question ?" class="input-style">
                 <div class="flex gap-2 mb-2">
-                    <label class="bg-gray-100 flex-1 h-20 rounded-xl flex items-center justify-center cursor-pointer border border-dashed border-gray-400 text-[10px]">
-                        📸 Photo 1 <input type="file" class="hidden" onchange="compress(this, 'p1')">
+                    <label class="bg-gray-50 flex-1 h-24 rounded-xl flex flex-col items-center justify-center cursor-pointer border-2 border-dashed border-gray-200 text-gray-400 text-[10px] relative overflow-hidden">
+                        <span id="txt-p1" class="font-bold">📸 Photo 1</span><input type="file" class="hidden" onchange="compress(this,'p1')">
+                        <div id="v-p1" class="absolute inset-0 bg-cover bg-center hidden"></div>
                     </label>
-                    <label class="bg-gray-100 flex-1 h-20 rounded-xl flex items-center justify-center cursor-pointer border border-dashed border-gray-400 text-[10px]">
-                        📸 Photo 2 <input type="file" class="hidden" onchange="compress(this, 'p2')">
+                    <label class="bg-gray-50 flex-1 h-24 rounded-xl flex flex-col items-center justify-center cursor-pointer border-2 border-dashed border-gray-200 text-gray-400 text-[10px] relative overflow-hidden">
+                        <span id="txt-p2" class="font-bold">📸 Photo 2</span><input type="file" class="hidden" onchange="compress(this,'p2')">
+                        <div id="v-p2" class="absolute inset-0 bg-cover bg-center hidden"></div>
                     </label>
                 </div>
-                <div class="flex gap-2 mb-2 text-[10px] text-green-500 font-bold text-center">
-                    <span id="ok-p1" class="flex-1 hidden">OK !</span>
-                    <span id="ok-p2" class="flex-1 hidden">OK !</span>
-                </div>
-                <button onclick="sendPoll()" class="w-full bg-[#C4A484] text-white py-3 rounded-xl font-bold text-xs">Envoyer</button>
+                <button onclick="sendPoll()" class="btn-primary">Lancer le vote</button>
             </div>
-
-            <div class="flex gap-2 items-center bg-white p-2 rounded-full shadow-xl border">
-                <button onclick="document.getElementById('poll-modal').classList.toggle('hidden')" class="w-10 h-10 rounded-full bg-gray-100 text-[#C4A484]"><i class="fa-solid fa-camera"></i></button>
-                <input type="text" id="msg" placeholder="Message..." class="flex-1 outline-none text-sm px-2">
-                <button onclick="sendMsg()" class="w-10 h-10 rounded-full bg-[#C4A484] text-white"><i class="fa-solid fa-paper-plane text-xs"></i></button>
+            <div class="flex gap-2 items-center bg-white p-2 rounded-full shadow-2xl border border-gray-100">
+                <button onclick="document.getElementById('poll-modal').classList.toggle('hidden')" class="w-10 h-10 rounded-full bg-gray-50 text-[#C4A484] flex items-center justify-center"><i class="fa-solid fa-camera"></i></button>
+                <input type="text" id="msg" placeholder="Message..." class="flex-1 outline-none text-sm px-2 bg-transparent">
+                <button onclick="sendMsg()" class="w-10 h-10 rounded-full bg-[#C4A484] text-white shadow-lg shadow-orange-100 flex items-center justify-center"><i class="fa-solid fa-paper-plane text-xs"></i></button>
             </div>
         </div>
     </div>
 
     <div id="budget" class="page">
-        <h2 class="text-lg font-bold mb-4 ml-2">Finances 💸</h2>
-        <div class="card bg-[#4A443F] text-white">
-            <div class="flex justify-between items-center mb-2">
-                <div><p class="text-[10px] opacity-60">Économies</p><h2 class="text-3xl font-bold" id="tot-save">0 €</h2></div>
-                <button onclick="editSave()" class="bg-white/10 px-4 py-2 rounded-xl text-xs font-bold">+ / -</button>
+        <h2 class="text-xl font-black italic text-[#C4A484] mb-4 ml-2">FINANCES</h2>
+        <div class="card bg-[#4A443F] text-white border-none">
+            <div class="flex justify-between items-center mb-4">
+                <div><p class="text-[10px] uppercase opacity-60 font-bold tracking-widest">Cagnotte</p><h2 class="text-3xl font-black mt-1" id="tot-save">0 €</h2></div>
+                <button onclick="editSave()" class="bg-white/10 backdrop-blur-md px-4 py-2 rounded-xl text-xs font-bold hover:bg-white/20 transition">+ / -</button>
             </div>
-            <div id="hist-save" class="text-[10px] opacity-70 border-t border-white/10 pt-2 space-y-1 max-h-20 overflow-y-auto"></div>
+            <div id="hist-save" class="text-[10px] opacity-70 border-t border-white/10 pt-3 space-y-2 max-h-24 overflow-y-auto"></div>
         </div>
-        
-        <div class="card">
-            <div class="flex justify-between font-bold text-sm mb-2"><span>💍 Mariage</span> <span id="t-wed" class="text-[#C4A484]">0€</span></div>
-            <div id="l-wed" class="space-y-2 text-xs"></div>
-            <button onclick="addBud('wed')" class="w-full text-[10px] border border-dashed rounded py-2 mt-3">+ Dépense</button>
-        </div>
-        <div class="card">
-            <div class="flex justify-between font-bold text-sm mb-2"><span>🏠 Appart</span> <span id="t-apt" class="text-blue-500">0€</span></div>
-            <div id="l-apt" class="space-y-2 text-xs"></div>
-            <button onclick="addBud('apt')" class="w-full text-[10px] border border-dashed rounded py-2 mt-3">+ Dépense</button>
-        </div>
+        <details class="card" open><summary class="font-bold text-sm cursor-pointer list-none flex justify-between items-center text-gray-700"><span>💍 Mariage</span> <span id="t-wed" class="text-[10px] bg-orange-50 text-orange-600 font-bold px-2 py-1 rounded-lg">0€</span></summary><div id="l-wed" class="mt-4 space-y-3"></div><button onclick="addBud('wed')" class="w-full py-3 border border-dashed border-gray-200 rounded-xl text-[10px] text-gray-400 mt-4 font-bold">+ Ajouter une dépense</button></details>
+        <details class="card"><summary class="font-bold text-sm cursor-pointer list-none flex justify-between items-center text-gray-700"><span>🏠 Appartement</span> <span id="t-apt" class="text-[10px] bg-blue-50 text-blue-600 font-bold px-2 py-1 rounded-lg">0€</span></summary><div id="l-apt" class="mt-4 space-y-3"></div><button onclick="addBud('apt')" class="w-full py-3 border border-dashed border-gray-200 rounded-xl text-[10px] text-gray-400 mt-4 font-bold">+ Ajouter une dépense</button></details>
     </div>
 
     <div id="wish" class="page">
-        <h2 class="text-lg font-bold mb-4 ml-2">Wishlist 🎁</h2>
-        <div class="card bg-orange-50">
-            <div class="flex gap-2">
-                <input type="text" id="w-n" placeholder="Objet" class="input-box bg-white w-2/3">
-                <input type="number" id="w-p" placeholder="Prix €" class="input-box bg-white w-1/3">
-            </div>
-            <input type="text" id="w-l" placeholder="Lien (URL)" class="input-box bg-white">
-            <label class="bg-white w-full py-3 text-center text-xs border border-dashed border-[#C4A484] rounded-xl mb-3 cursor-pointer text-[#C4A484] block">
-                📸 Photo Galerie
-                <input type="file" class="hidden" onchange="compress(this, 'wish')">
+        <h2 class="text-xl font-black italic text-[#C4A484] mb-4 ml-2">WISHLIST</h2>
+        <div class="card bg-white border-l-4 border-[#C4A484]">
+            <div class="flex gap-2 mb-0"><input type="text" id="w-n" placeholder="Nom de l'objet" class="input-style w-2/3"><input type="number" id="w-p" placeholder="Prix €" class="input-style w-1/3 text-center"></div>
+            <input type="text" id="w-l" placeholder="Lien URL (Optionnel)" class="input-style">
+            <label class="bg-gray-50 w-full py-4 text-center text-xs border border-dashed border-gray-300 rounded-xl mb-3 cursor-pointer text-gray-400 relative overflow-hidden block font-bold transition hover:bg-gray-100">
+                <span id="txt-w"><i class="fa-solid fa-image mr-1"></i> Ajouter une photo</span>
+                <input type="file" class="hidden" onchange="compress(this,'wish')">
+                <div id="v-w" class="absolute inset-0 bg-cover bg-center hidden opacity-80"></div>
             </label>
-            <p id="ok-wish" class="text-[10px] text-green-500 text-center hidden mb-2 font-bold">Photo prête !</p>
-            <button onclick="addWish()" class="w-full bg-[#C4A484] text-white py-3 rounded-xl font-bold text-xs">Ajouter</button>
+            <button onclick="addWish()" class="btn-primary">Ajouter à la liste</button>
         </div>
-        <div id="w-grid" class="grid grid-cols-2 gap-3 pb-20"></div>
+        <div id="w-grid" class="grid grid-cols-2 gap-4 pb-20"></div>
     </div>
 
     <div id="deen" class="page">
-        <h2 class="text-lg font-bold mb-4 ml-2">Spiritualité 🤲</h2>
+        <h2 class="text-xl font-black italic text-[#C4A484] mb-4 ml-2">SPIRITUALITÉ</h2>
         <div class="card"><div id="prayers" class="space-y-1"></div></div>
-        <div class="card">
-            <p class="text-xs font-bold mb-2">Nos Invocations</p>
-            <textarea id="duas" class="w-full h-20 p-2 bg-gray-50 rounded-lg text-sm" placeholder="Écrire..."></textarea>
-            <button onclick="saveDua()" class="w-full mt-2 bg-gray-200 text-gray-600 py-2 rounded-lg text-xs font-bold">Enregistrer</button>
-        </div>
-        <div class="grid grid-cols-2 gap-3">
-            <div class="card text-center"><p class="text-[9px] text-gray-400">VERSETS</p><h3 id="cv" class="text-2xl font-bold my-1 text-[#C4A484]">0</h3><div class="flex justify-center gap-2"><button onclick="upC('v',-1)">-</button><button onclick="upC('v',1)">+</button></div></div>
-            <div class="card text-center"><p class="text-[9px] text-gray-400">PAGES</p><h3 id="cp" class="text-2xl font-bold my-1 text-[#C4A484]">0</h3><div class="flex justify-center gap-2"><button onclick="upC('p',-1)">-</button><button onclick="upC('p',1)">+</button></div></div>
-        </div>
+        <div class="card"><p class="text-[10px] font-black uppercase text-gray-300 mb-3 tracking-widest">Nos invocations communes</p><textarea id="duas" class="w-full h-24 p-3 bg-gray-50 rounded-xl text-sm italic outline-none resize-none text-gray-600 border border-gray-100" placeholder="Ya Allah..."></textarea><button onclick="saveDua()" class="w-full mt-3 bg-slate-100 text-slate-500 py-3 rounded-xl text-xs font-bold shadow-sm">Enregistrer</button></div>
+        <div class="grid grid-cols-2 gap-4"><div class="card text-center py-6"><p class="text-[9px] font-black text-gray-300 tracking-widest">VERSETS</p><h3 id="cv" class="text-4xl font-black my-2 text-[#C4A484]">0</h3><div class="flex justify-center gap-3"><button onclick="upC('v',-1)" class="w-8 h-8 rounded-full bg-gray-100">-</button><button onclick="upC('v',1)" class="w-8 h-8 rounded-full bg-[#C4A484] text-white shadow-lg">+</button></div></div><div class="card text-center py-6"><p class="text-[9px] font-black text-gray-300 tracking-widest">PAGES</p><h3 id="cp" class="text-4xl font-black my-2 text-[#C4A484]">0</h3><div class="flex justify-center gap-3"><button onclick="upC('p',-1)" class="w-8 h-8 rounded-full bg-gray-100">-</button><button onclick="upC('p',1)" class="w-8 h-8 rounded-full bg-[#C4A484] text-white shadow-lg">+</button></div></div></div>
     </div>
 
     <nav class="nav-bar">
         <button onclick="nav('home', this)" class="nav-btn active"><i class="fa-solid fa-house"></i></button>
-        <button onclick="nav('places', this)" class="nav-btn"><i class="fa-solid fa-map-pin"></i></button>
+        <button onclick="nav('places', this)" class="nav-btn"><i class="fa-solid fa-map-location-dot"></i></button>
         <button onclick="nav('chat', this)" class="nav-btn"><i class="fa-solid fa-comments"></i></button>
         <button onclick="nav('budget', this)" class="nav-btn"><i class="fa-solid fa-wallet"></i></button>
         <button onclick="nav('wish', this)" class="nav-btn"><i class="fa-solid fa-gift"></i></button>
@@ -194,7 +210,7 @@
     </nav>
 
     <script>
-        // CONFIG FIREBASE (COLLE TES CLES ICI)
+        // --- COLLE TES CLÉS ICI ---
         const firebaseConfig = {
             apiKey: "AIzaSyCBZ96lSFIWzPsHklwk3ZU8kfWudfp8oVQ",
             authDomain: "samcy-1136c.firebaseapp.com",
@@ -208,11 +224,10 @@
 
         // USER
         let user = localStorage.getItem('u');
-        if(!user) { user = prompt("Samia ou Quincy ?").toLowerCase().trim(); localStorage.setItem('u', user); }
-        document.getElementById('u-name').innerText = user;
+        if(!user) { user = prompt("Qui es-tu ? (samia / quincy)").toLowerCase().trim(); localStorage.setItem('u', user); }
+        document.getElementById('u-display').innerText = user;
         function logout() { localStorage.removeItem('u'); location.reload(); }
 
-        // NAVIGATION
         window.nav = (p, btn) => {
             document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
             document.getElementById(p).classList.add('active');
@@ -220,129 +235,131 @@
             btn.classList.add('active');
         };
 
-        // --- COMPRESSEUR D'IMAGE (VITAL POUR QUE CA MARCHE) ---
+        // --- COMPRESSEUR ---
         let imgs = {};
         window.compress = (inp, key) => {
             const file = inp.files[0];
             if (!file) return;
             const reader = new FileReader();
             reader.readAsDataURL(file);
-            reader.onload = (event) => {
+            reader.onload = (e) => {
                 const img = new Image();
-                img.src = event.target.result;
+                img.src = e.target.result;
                 img.onload = () => {
                     const canvas = document.createElement('canvas');
                     const ctx = canvas.getContext('2d');
-                    const maxWidth = 500; // On réduit à 500px max
-                    const scale = maxWidth / img.width;
-                    canvas.width = maxWidth;
-                    canvas.height = img.height * scale;
+                    const maxWidth = 400; const scale = maxWidth / img.width;
+                    canvas.width = maxWidth; canvas.height = img.height * scale;
                     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    
-                    // Sauvegarde l'image compressée
-                    imgs[key] = canvas.toDataURL('image/jpeg', 0.7);
-                    
-                    // Affiche un petit OK
-                    if(document.getElementById('ok-'+key)) document.getElementById('ok-'+key).classList.remove('hidden');
-                };
-            };
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.6);
+                    imgs[key] = dataUrl;
+                    let vid = key === 'wish' ? 'v-w' : (key === 'p1' ? 'v-p1' : 'v-p2');
+                    let tid = key === 'wish' ? 'txt-w' : (key === 'p1' ? 'txt-p1' : 'txt-p2');
+                    document.getElementById(vid).style.backgroundImage = `url(${dataUrl})`;
+                    document.getElementById(vid).classList.remove('hidden');
+                    if(document.getElementById(tid)) document.getElementById(tid).innerText = "OK";
+                }
+            }
         };
 
-        // 1. HOME
-        window.setMood=(e, btn)=>{ 
-            db.collection('moods').doc(user).set({e}); 
-            btn.parentNode.querySelectorAll('button').forEach(b=>b.classList.remove('active')); btn.classList.add('active');
-        };
+        // HOME
+        window.setMood=(e, btn)=>{ db.collection('moods').doc(user).set({e}); btn.parentNode.querySelectorAll('button').forEach(b=>b.classList.remove('selected')); btn.classList.add('selected'); };
         db.collection('moods').onSnapshot(s=>{ s.forEach(d=>{ if(document.getElementById('m-'+d.id)) document.getElementById('m-'+d.id).innerText=d.data().e; }); });
 
-        const dt=new Date(); const dim=new Date(dt.getFullYear(),dt.getMonth()+1,0).getDate();
-        for(let i=1;i<=dim;i++){ document.getElementById('cal-grid').innerHTML+=`<div onclick="selD(${i})" class="aspect-square bg-gray-50 rounded flex items-center justify-center cursor-pointer" id="d-${i}">${i}</div>`; }
-        window.selD=(d)=>{ 
-            const date=`${dt.getFullYear()}-${dt.getMonth()+1}-${d}`;
-            document.getElementById('evt-box').classList.remove('hidden'); 
-            document.getElementById('sel-date').innerText=date;
-            db.collection('evts').where('d','==',date).onSnapshot(s=>{ 
-                document.getElementById('evt-list').innerHTML=''; 
-                s.forEach(doc=>document.getElementById('evt-list').innerHTML+=`<div class="flex justify-between border-b pb-1"><span>${doc.data().t}</span><span onclick="del('evts','${doc.id}')" class="text-red-400">x</span></div>`); 
-            });
-        };
-        db.collection('evts').onSnapshot(s=>{ document.querySelectorAll('.bg-[#C4A484]').forEach(e=>e.classList.remove('bg-[#C4A484]','text-white')); s.forEach(d=>{ const day=d.data().d.split('-')[2]; if(document.getElementById('d-'+day)) document.getElementById('d-'+day).classList.add('bg-[#C4A484]','text-white'); }); });
-        window.addEvt=()=>{ const t=document.getElementById('new-evt').value; const d=document.getElementById('sel-date').innerText; if(t)db.collection('evts').add({t,d}); document.getElementById('new-evt').value=''; };
-
-        // 2. PLACES
-        window.addPlace=()=>{ const n=document.getElementById('pl-name').value; const c=document.getElementById('pl-cat').value; const l=document.getElementById('pl-loc').value; if(n){ db.collection('places').add({n,c,l}); document.getElementById('pl-name').value=''; }};
-        db.collection('places').onSnapshot(s=>{ 
-            document.getElementById('pl-list').innerHTML='';
-            s.forEach(doc=>{ const d=doc.data(); const ic=d.c==='Resto'?'🍝':d.c==='FastFood'?'🍔':'🎢'; 
-            document.getElementById('pl-list').innerHTML+=`<div class="bg-white p-3 rounded-xl shadow-sm border flex justify-between items-center"><div class="flex gap-2 items-center"><span class="text-2xl">${ic}</span><div><p class="font-bold text-sm">${d.n}</p><p class="text-xs text-gray-400">${d.l||''}</p></div></div><button onclick="del('places','${doc.id}')" class="text-gray-300">x</button></div>`; });
+        // Countdown
+        db.collection('events').onSnapshot(s=>{
+            const today=new Date(); today.setHours(0,0,0,0); let arr=[];
+            s.forEach(d=>{ const ev=d.data(); const dt=new Date(ev.d); if(dt>=today)arr.push({...ev, obj:dt}); });
+            if(arr.length){
+                arr.sort((a,b)=>a.obj-b.obj); const diff=Math.ceil((arr[0].obj-today)/(1000*60*60*24));
+                document.getElementById('countdown').classList.remove('hidden'); document.getElementById('next-t').innerText=arr[0].t; document.getElementById('next-j').innerText=diff; document.getElementById('next-d').innerText=`Le ${arr[0].d}`;
+            } else { document.getElementById('countdown').classList.add('hidden'); }
         });
 
-        // 3. CHAT (FIXED)
+        // Calendar (CORRIGÉ)
+        const dt=new Date(); 
+        const monthNames = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
+        document.getElementById('cal-title').innerText = monthNames[dt.getMonth()] + " " + dt.getFullYear();
+        
+        const dim=new Date(dt.getFullYear(),dt.getMonth()+1,0).getDate();
+        const startDay = new Date(dt.getFullYear(), dt.getMonth(), 1).getDay(); 
+        const shift = startDay === 0 ? 6 : startDay - 1; 
+        
+        const calGrid = document.getElementById('cal-grid');
+        calGrid.innerHTML = "";
+        for(let k=0; k<shift; k++) calGrid.innerHTML+='<div></div>';
+        for(let i=1;i<=dim;i++){ 
+            const dStr=`${dt.getFullYear()}-${(dt.getMonth()+1).toString().padStart(2,'0')}-${i.toString().padStart(2,'0')}`; 
+            calGrid.innerHTML+=`<div onclick="selD('${dStr}')" class="cal-day cursor-pointer" id="day-${dStr}">${i}</div>`; 
+        }
+        
+        db.collection('events').onSnapshot(s=>{ 
+            document.querySelectorAll('.has-event').forEach(e=>e.classList.remove('has-event')); 
+            s.forEach(d=>{ const date=d.data().d; if(document.getElementById(`day-${date}`)) document.getElementById(`day-${date}`).classList.add('has-event'); }); 
+        });
+        
+        window.selD=(d)=>{ document.getElementById('evt-box').classList.remove('hidden'); document.getElementById('sel-date').innerText=d; db.collection('events').where('d','==',d).onSnapshot(s=>{ const l=document.getElementById('evt-list');l.innerHTML=''; s.forEach(doc=>l.innerHTML+=`<div class="flex justify-between items-center bg-gray-50 p-2 rounded-lg text-xs font-bold text-gray-600"><span>${doc.data().t}</span><span onclick="del('events','${doc.id}')" class="text-red-300 cursor-pointer px-2">x</span></div>`); }); };
+        window.addEvt=()=>{ const t=document.getElementById('new-evt').value; const d=document.getElementById('sel-date').innerText; if(t)db.collection('events').add({t,d}); document.getElementById('new-evt').value=''; };
+
+        // PLACES
+        window.addPlace=()=>{ const n=document.getElementById('pl-name').value; const c=document.getElementById('pl-cat').value; const l=document.getElementById('pl-loc').value; if(n){ db.collection('places').add({n,c,l}); document.getElementById('pl-name').value=''; }};
+        let cF='all'; window.filterP=(c)=>{ cF=c; renderP(); };
+        let allP=[]; db.collection('places').onSnapshot(s=>{ allP=[]; s.forEach(d=>allP.push({id:d.id,...d.data()})); renderP(); });
+        function renderP(){ const l=document.getElementById('pl-list'); l.innerHTML=''; const f=cF==='all'?allP:allP.filter(p=>p.c===cF); f.forEach(p=>{ const ic=p.c==='Resto'?'🍝':p.c==='FastFood'?'🍔':'🎢'; l.innerHTML+=`<div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex justify-between items-center"><div class="flex gap-3 items-center"><span class="text-2xl">${ic}</span><div><p class="font-black text-xs text-gray-800 uppercase">${p.n}</p><p class="text-[10px] text-gray-400 font-bold">${p.l||''}</p></div></div><button onclick="del('places','${p.id}')" class="text-gray-300">x</button></div>`; }); }
+
+        // CHAT
         window.sendMsg=()=>{ const t=document.getElementById('msg').value; if(t){ db.collection('chat').add({type:'txt',t,u:user,time:Date.now()}); document.getElementById('msg').value=''; }};
         window.sendPoll=()=>{ 
             const q=document.getElementById('pq').value; 
             if(q){ 
-                db.collection('chat').add({type:'poll',q,i1:imgs.p1,i2:imgs.p2,u:user,time:Date.now()}); 
-                document.getElementById('poll-modal').classList.add('hidden'); 
-                document.getElementById('pq').value=''; imgs={}; 
-            }
+                db.collection('chat').add({type:'poll',q,i1:imgs.p1||'',i2:imgs.p2||'',v1:0,v2:0,u:user,time:Date.now()}); 
+                document.getElementById('poll-modal').classList.add('hidden'); document.getElementById('pq').value=''; imgs={}; 
+            } 
         };
-        db.collection('chat').orderBy('time').onSnapshot(s=>{ 
-            const l=document.getElementById('chat-box'); l.innerHTML=''; 
-            s.forEach(doc=>{ const d=doc.data(); const mine=d.u===user; 
-                if(d.type==='txt') l.innerHTML+=`<div class="flex flex-col ${mine?'items-end':'items-start'}"><div class="${mine?'bg-[#C4A484] text-white':'bg-white'} px-4 py-2 rounded-2xl text-sm max-w-[80%] shadow-sm mb-1">${d.t}</div></div>`;
-                else l.innerHTML+=`<div class="w-full bg-white p-3 rounded-2xl border mb-3 shadow-sm"><p class="font-bold text-xs mb-2 text-[#C4A484]">📊 ${d.q}</p><div class="flex gap-2"><div class="flex-1 h-24 bg-cover rounded-xl border" style="background-image:url('${d.i1}')"></div><div class="flex-1 h-24 bg-cover rounded-xl border" style="background-image:url('${d.i2}')"></div></div></div>`;
-            }); 
-            l.scrollTop=l.scrollHeight; 
-        });
+        
+        window.votePoll=(id, side)=>{
+            const ref = db.collection('chat').doc(id);
+            db.runTransaction((transaction) => {
+                return transaction.get(ref).then((sfDoc) => {
+                    if (!sfDoc.exists) return;
+                    const newCount = (sfDoc.data()[side] || 0) + 1;
+                    transaction.update(ref, { [side]: newCount });
+                });
+            });
+        };
 
-        // 4. BUDGET
-        window.editSave=()=>{ 
-            const v=prompt("Montant (+ ou -):"); 
-            if(v){ 
-                const r=prompt("Motif ?");
-                const cur=parseInt(document.getElementById('tot-save').innerText); 
-                db.collection('stats').doc('s').set({t:cur+parseInt(v)}); 
-                db.collection('hist').add({v:v, r:r||'?', d:Date.now()});
+        db.collection('chat').orderBy('time').onSnapshot(s=>{ const l=document.getElementById('chat-box'); l.innerHTML=''; s.forEach(doc=>{ const d=doc.data(); const mine=d.u===user; 
+            if(d.type==='txt') l.innerHTML+=`<div class="flex flex-col ${mine?'items-end':'items-start'}"><div class="${mine?'bg-[#C4A484] text-white rounded-br-none':'bg-white text-gray-600 rounded-bl-none'} px-4 py-3 rounded-2xl text-xs font-bold max-w-[80%] shadow-sm mb-1">${d.t}</div></div>`;
+            else {
+                const total = (d.v1||0) + (d.v2||0);
+                const p1 = total === 0 ? 0 : Math.round((d.v1/total)*100);
+                const p2 = total === 0 ? 0 : Math.round((d.v2/total)*100);
+                l.innerHTML+=`<div class="w-full bg-white p-4 rounded-3xl border border-gray-100 mb-3 shadow-sm"><p class="font-black text-xs mb-3 text-[#C4A484] uppercase tracking-wide">📊 ${d.q}</p><div class="flex gap-2"><div onclick="votePoll('${doc.id}', 'v1')" class="flex-1 relative cursor-pointer active:scale-95 transition"><div class="h-24 bg-cover rounded-xl border border-gray-100" style="background-image:url('${d.i1}')"></div><div class="absolute bottom-1 right-1 bg-black/50 text-white text-[9px] font-bold px-2 rounded-full">${d.v1||0} (${p1}%)</div></div><div onclick="votePoll('${doc.id}', 'v2')" class="flex-1 relative cursor-pointer active:scale-95 transition"><div class="h-24 bg-cover rounded-xl border border-gray-100" style="background-image:url('${d.i2}')"></div><div class="absolute bottom-1 right-1 bg-black/50 text-white text-[9px] font-bold px-2 rounded-full">${d.v2||0} (${p2}%)</div></div></div></div>`;
             }
-        };
+        }); l.scrollTop=l.scrollHeight; });
+
+        // BUDGET
+        window.editSave=()=>{ const v=prompt("Montant (+/-):"); if(v){ const r=prompt("Motif?"); const cur=parseInt(document.getElementById('tot-save').innerText); db.collection('stats').doc('s').set({t:cur+parseInt(v)}); db.collection('hist').add({v,r:r||'?',d:Date.now()}); }};
         db.collection('stats').doc('s').onSnapshot(d=>{ if(d.exists)document.getElementById('tot-save').innerText=d.data().t+" €"; });
-        db.collection('hist').orderBy('d','desc').onSnapshot(s=>{ 
-            document.getElementById('hist-save').innerHTML=''; 
-            s.forEach(doc=>{ const d=doc.data(); const c=parseInt(d.v)>0?'text-green-500':'text-red-500'; document.getElementById('hist-save').innerHTML+=`<div class="flex justify-between border-b border-white/10"><span class="w-2/3 truncate">${d.r}</span><span class="${c}">${d.v}€</span></div>`; });
-        });
-
-        window.addBud=(c)=>{ const n=prompt("Quoi?"); const p=prompt("Prévu?"); if(n)db.collection('b_'+c).add({n,p,v:0}); };
-        function ldBud(c,lid){ db.collection('b_'+c).onSnapshot(s=>{ const l=document.getElementById(lid); l.innerHTML=''; s.forEach(doc=>{ const d=doc.data(); l.innerHTML+=`<div class="grid grid-cols-3 text-xs border-b py-2 items-center"><span>${d.n}</span><span class="text-gray-400">${d.p}€</span><input type="number" value="${d.v}" onchange="upBud('${c}','${doc.id}',this.value)" class="bg-gray-50 w-16 p-1 rounded text-center"><button onclick="del('b_${c}','${doc.id}')" class="text-red-300">x</button></div>`; }); }); }
+        db.collection('hist').orderBy('d','desc').limit(5).onSnapshot(s=>{ document.getElementById('hist-save').innerHTML=''; s.forEach(doc=>{ const d=doc.data(); const c=parseInt(d.v)>0?'text-green-500':'text-red-500'; document.getElementById('hist-save').innerHTML+=`<div class="flex justify-between border-b border-white/10 pb-1"><span class="w-2/3 truncate font-bold">${d.r}</span><span class="${c} font-black">${d.v}€</span></div>`; }); });
+        
+        window.addBud=(c)=>{ 
+            const n=prompt("Quoi? (ex: Traiteur)"); 
+            const p=prompt("Prévu? (ex: 500)"); 
+            const l=prompt("Lien? (Optionnel)"); 
+            if(n) db.collection('b_'+c).add({n,p,v:0,l:l||''}); 
+        };
+        function ldBud(c,lid){ db.collection('b_'+c).onSnapshot(s=>{ const l=document.getElementById(lid); l.innerHTML=''; let t=0; s.forEach(doc=>{ const d=doc.data(); t+=parseInt(d.v); l.innerHTML+=`<div class="flex flex-col border-b border-gray-100 py-3"><div class="flex justify-between items-center text-xs"><span class="font-bold text-gray-700">${d.n}</span><span class="text-gray-400 font-bold">${d.p}€</span><input type="number" value="${d.v}" onchange="upBud('${c}','${doc.id}',this.value)" class="bg-gray-50 w-12 p-2 rounded-lg text-center font-bold text-gray-600 outline-none"><button onclick="del('b_${c}','${doc.id}')" class="text-gray-300 hover:text-red-400 ml-2">x</button></div>${d.l ? `<a href="${d.l}" target="_blank" class="text-[9px] text-[#C4A484] underline mt-1 font-bold">Voir le lien 🔗</a>` : ''}</div>`; }); document.getElementById('t-'+c).innerText=t+"€"; }); }
         window.upBud=(c,id,v)=>db.collection('b_'+c).doc(id).update({v});
         ldBud('wed','l-wed'); ldBud('apt','l-apt');
 
-        // 5. WISHLIST (FIXED WITH COMPRESSOR)
-        window.addWish=()=>{ 
-            const n=document.getElementById('w-n').value; 
-            const p=document.getElementById('w-p').value; 
-            const l=document.getElementById('w-l').value; 
-            const i=imgs.wish||"https://via.placeholder.com/150"; 
-            if(n){ 
-                db.collection('wish').add({n,p,l,i,u:user}); 
-                document.getElementById('w-n').value=''; 
-                document.getElementById('w-p').value=''; 
-                imgs.wish=''; 
-                if(document.getElementById('ok-wish')) document.getElementById('ok-wish').classList.add('hidden');
-            }
-        };
-        db.collection('wish').onSnapshot(s=>{ 
-            const g=document.getElementById('w-grid'); g.innerHTML=''; 
-            s.forEach(doc=>{ 
-                const d=doc.data(); 
-                const badge=d.u==='samia'?'bg-[#C4A484] text-white':'bg-gray-200 text-gray-500';
-                g.innerHTML+=`<div class="card p-2 text-center relative overflow-hidden"><div class="h-28 bg-cover bg-center rounded-lg mb-2" style="background-image:url('${d.i}')"></div><p class="font-bold text-xs truncate">${d.n}</p><p class="text-xs font-bold text-[#C4A484]">${d.p?d.p+'€':''}</p><div class="flex justify-between items-center px-1 mt-1"><span class="${badge} text-[9px] px-2 py-0.5 rounded-full font-bold uppercase">${d.u}</span>${d.l?`<a href="${d.l}" target="_blank" class="text-[10px] text-blue-400 underline">Lien</a>`:''}</div><button onclick="del('wish','${doc.id}')" class="absolute top-2 right-2 bg-white rounded-full w-5 h-5 text-red-500 shadow flex items-center justify-center">×</button></div>`; 
-            }); 
-        });
+        // WISHLIST
+        window.addWish=()=>{ const n=document.getElementById('w-n').value; const p=document.getElementById('w-p').value; const l=document.getElementById('w-l').value; const i=imgs.wish||"https://via.placeholder.com/150"; if(n){ db.collection('wish').add({n,p,l,i,u:user}); document.getElementById('w-n').value=''; document.getElementById('w-p').value=''; imgs.wish=''; document.getElementById('v-w').classList.add('hidden'); document.getElementById('txt-w').innerHTML='<i class="fa-solid fa-image mr-1"></i> Ajouter une photo'; } };
+        db.collection('wish').onSnapshot(s=>{ const g=document.getElementById('w-grid'); g.innerHTML=''; s.forEach(doc=>{ const d=doc.data(); const tag=d.u==='samia'?'bg-[#C4A484] text-white':'bg-gray-200 text-gray-500'; g.innerHTML+=`<div class="card p-2 text-center relative overflow-hidden"><div class="h-32 bg-cover bg-center rounded-xl mb-2" style="background-image:url('${d.i}')"></div><div class="flex justify-between items-start mb-1 px-1"><p class="font-black text-xs truncate w-2/3 text-left text-gray-700">${d.n}</p><p class="text-xs font-black text-[#C4A484]">${d.p?d.p+'€':''}</p></div><div class="flex justify-between items-center px-1 mt-1"><span class="${tag} text-[8px] px-2 py-1 rounded-md font-black uppercase tracking-wider">${d.u}</span>${d.l?`<a href="${d.l}" target="_blank" class="text-[9px] text-gray-400 font-bold underline">Voir</a>`:''}</div><button onclick="del('wish','${doc.id}')" class="absolute top-2 right-2 bg-white/90 rounded-full w-6 h-6 text-red-400 shadow-sm flex items-center justify-center backdrop-blur-sm">×</button></div>`; }); });
 
-        // 6. DEEN
+        // DEEN
         const prs=['Fajr','Dhuhr','Asr','Maghrib','Isha']; const today=new Date().toISOString().split('T')[0];
-        prs.forEach(p=>{ document.getElementById('prayers').innerHTML+=`<div class="flex justify-between py-1 border-b border-gray-100"><span class="text-sm">${p}</span><input type="checkbox" id="chk-${p}" onchange="chkP('${p}')" class="accent-[#C4A484]"></div>`; });
+        prs.forEach(p=>{ document.getElementById('prayers').innerHTML+=`<div class="flex justify-between py-3 border-b border-gray-100 last:border-0"><span class="text-sm font-bold text-gray-600">${p}</span><input type="checkbox" id="chk-${p}" onchange="chkP('${p}')" class="accent-[#C4A484] w-5 h-5 cursor-pointer"></div>`; });
         window.chkP=(p)=>db.collection('pray').doc(`${today}_${user}`).set({[p]:document.getElementById(`chk-${p}`).checked},{merge:true});
         db.collection('pray').doc(`${today}_${user}`).onSnapshot(d=>{ if(d.exists)prs.forEach(p=>{if(document.getElementById(`chk-${p}`))document.getElementById(`chk-${p}`).checked=d.data()[p]}); });
         window.saveDua=()=>db.collection('deen').doc('d').set({t:document.getElementById('duas').value});
