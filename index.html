@@ -2,8 +2,14 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>S & Q App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>S & Q</title>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="S & Q Love">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2530/2530862.png">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
@@ -14,7 +20,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
         
         :root { --primary: #C4A484; --bg: #FDFBF9; }
-        body { font-family: 'Outfit', sans-serif; background-color: var(--bg); color: #5D5550; padding-bottom: 120px; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Outfit', sans-serif; background-color: var(--bg); color: #5D5550; padding-bottom: 120px; -webkit-tap-highlight-color: transparent; padding-top: env(safe-area-inset-top); }
         
         .page { display: none; padding: 20px; animation: fadeIn 0.3s; }
         .page.active { display: block; }
@@ -92,7 +98,7 @@
         </div>
     </div>
 
-    <div class="px-6 pt-10 pb-2 flex justify-between items-end">
+    <div class="px-6 pt-6 pb-2 flex justify-between items-end">
         <div><h1 class="text-3xl font-black italic tracking-tighter text-[#4A443F]">S & Q</h1><p class="text-[10px] font-bold uppercase text-gray-400 tracking-widest">Connecté : <span id="u-display">...</span></p></div>
         <button onclick="logout()" class="text-[10px] text-gray-300 underline bg-white px-3 py-1 rounded-full border">Sortir</button>
     </div>
@@ -209,7 +215,7 @@
     </nav>
 
     <script>
-        // CONFIG FIREBASE
+        // CONFIG FIREBASE (INTEGRÉE)
         const firebaseConfig = {
             apiKey: "AIzaSyCBZ96lSFIWzPsHklwk3ZU8kfWudfp8oVQ",
             authDomain: "samcy-1136c.firebaseapp.com",
@@ -289,7 +295,7 @@
         window.selD=(d)=>{ document.getElementById('evt-box').classList.remove('hidden'); document.getElementById('sel-date').innerText=d; db.collection('events').where('d','==',d).onSnapshot(s=>{ const l=document.getElementById('evt-list');l.innerHTML=''; s.forEach(doc=>l.innerHTML+=`<div class="flex justify-between items-center bg-gray-50 p-2 rounded-lg text-xs font-bold text-gray-600"><span>${doc.data().t}</span><span onclick="del('events','${doc.id}')" class="text-red-300 cursor-pointer px-2">x</span></div>`); }); };
         window.addEvt=()=>{ const t=document.getElementById('new-evt').value; const d=document.getElementById('sel-date').innerText; if(t)db.collection('events').add({t,d}); document.getElementById('new-evt').value=''; };
 
-        // PLACES (UPDATED WITH REVIEW)
+        // PLACES (NEW REVIEW SYSTEM)
         window.addPlace=()=>{ const n=document.getElementById('pl-name').value; const c=document.getElementById('pl-cat').value; const l=document.getElementById('pl-loc').value; if(n){ db.collection('places').add({n,c,l,v:false,r:0,comm:''}); document.getElementById('pl-name').value=''; }};
         let cF='all'; window.filterP=(c)=>{ cF=c; renderP(); };
         let allP=[]; db.collection('places').onSnapshot(s=>{ allP=[]; s.forEach(d=>allP.push({id:d.id,...d.data()})); renderP(); });
